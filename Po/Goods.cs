@@ -14,6 +14,18 @@ namespace CultivationHouseTools
 
         public int weight;
 
+        public Goods(string name, int index, int weight)
+        {
+            this.name = name;
+            this.index = index;
+            this.weight = weight;
+        }
+
+        public Goods(int weight)
+        {
+            this.weight = weight;
+        }
+
         public string ToString()
         {
             return $"{index}、name: {name}, weight: {weight}";

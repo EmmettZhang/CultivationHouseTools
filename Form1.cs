@@ -182,35 +182,45 @@ namespace CultivationHouseTools
             Thread.Sleep(1000); // 等待弹窗打开
             AutomationElement shopWindow = Common.getWindow("心愿盲盒");
 
+            Common.clickButton(shopWindow, "切换盲盒1");
+            Common.clickButton(shopWindow, "刷新当前盲盒数据");
+
             AutomationElementCollection controls =
                 shopWindow.FindAll(
                     TreeScope.Descendants,
                     Condition.TrueCondition
                 );
+
+            AutomationElementCollection labels =
+                    controls[0].FindAll(
+                        TreeScope.Descendants,
+                        Condition.TrueCondition
+                    );
+            Console.WriteLine(
+                labels.Count
+                );
             foreach (
                 AutomationElement item
-                in controls)
+                in labels)
             {
-                object pattern;
+                Console.WriteLine(
 
-                bool canScroll =
-                item.TryGetCurrentPattern(
-                    ScrollPattern.Pattern,
-                    out pattern
+                "Name="
+                + item.Current.Name
+
+                + " | Type="
+
+                + item.Current
+                .ControlType
+                .ProgrammaticName
+
+                + " | ID="
+
+                + item.Current
+                .AutomationId
+
                 );
-
-                if (canScroll)
-                {
-                    Console.WriteLine(
-
-                    item.Current.Name
-                    + " | "
-
-                    + item.Current.ControlType.ProgrammaticName
-                    );
-                }
             }
-
 
 
             //string s = unknownNum.Text.Trim();

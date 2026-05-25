@@ -13,16 +13,9 @@ namespace CultivationHouseTools
         {
             AutomationElement root = AutomationElement.RootElement;
 
-            Condition condition =
-                new PropertyCondition(
-                    AutomationElement.NameProperty,
-                    title
-                );
+            Condition condition = new PropertyCondition(AutomationElement.NameProperty, title);
 
-            AutomationElement window = root.FindFirst(
-                    TreeScope.Children,
-                    condition
-                );
+            AutomationElement window = root.FindFirst(TreeScope.Children, condition);
 
             return window;
         }
@@ -30,17 +23,9 @@ namespace CultivationHouseTools
         {
             AutomationElement el = window.FindFirst(
                         TreeScope.Descendants,
-
                         new AndCondition(
-                            new PropertyCondition(
-                                AutomationElement.ControlTypeProperty,
-                                ControlType.Button
-                            ),
-
-                            new PropertyCondition(
-                                AutomationElement.NameProperty,
-                                title
-                            )
+                            new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Button),
+                            new PropertyCondition(AutomationElement.NameProperty, title)
                         )
                     );
 
@@ -52,9 +37,7 @@ namespace CultivationHouseTools
             AutomationElement button = getButton(window, title);
             if (button != null)
             {
-                InvokePattern pattern = button.GetCurrentPattern(
-                        InvokePattern.Pattern
-                    ) as InvokePattern;
+                InvokePattern pattern = button.GetCurrentPattern(InvokePattern.Pattern) as InvokePattern;
 
                 pattern.Invoke();
             }
@@ -66,20 +49,9 @@ namespace CultivationHouseTools
 
         public static void setCombo(AutomationElement window, string title)
         {
-            AutomationElement combo =
-                window.FindFirst(
-                    TreeScope.Descendants,
-
-                    new PropertyCondition(
-                        AutomationElement.ControlTypeProperty,
-                        ControlType.ComboBox
-                    )
-                );
-            ExpandCollapsePattern expand =
-                combo.GetCurrentPattern(
-                    ExpandCollapsePattern.Pattern
-                )
-                as ExpandCollapsePattern;
+            AutomationElement combo = window.FindFirst(TreeScope.Descendants,
+                                                        new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.ComboBox));
+            ExpandCollapsePattern expand = combo.GetCurrentPattern(ExpandCollapsePattern.Pattern) as ExpandCollapsePattern;
 
             expand.Expand();
             Thread.Sleep(300);
@@ -88,16 +60,9 @@ namespace CultivationHouseTools
                 combo.FindFirst(
                     TreeScope.Descendants,
 
-                    new PropertyCondition(
-                        AutomationElement.NameProperty,
-                        title
-                    )
+                    new PropertyCondition(AutomationElement.NameProperty, title)
                 );
-            SelectionItemPattern select =
-                item.GetCurrentPattern(
-                SelectionItemPattern.Pattern
-                )
-                as SelectionItemPattern;
+            SelectionItemPattern select = item.GetCurrentPattern(SelectionItemPattern.Pattern) as SelectionItemPattern;
 
             select.Select();
         }

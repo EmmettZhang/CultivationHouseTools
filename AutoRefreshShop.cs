@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
@@ -9,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Automation;
 using System.Windows.Forms;
+using CultivationHouseTools.lib;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
@@ -23,49 +25,6 @@ namespace CultivationHouseTools
             _form = form;
         }
 
-        private readonly List<(string Key, int Weight)> weightRules =
-            new List<(string, int)>
-            {
-                ("称号",19999997),
-                ("背景",9999999),
-                ("头像",9999998),
-                ("无级别",999999),
-                ("保级丹",999998),
-                ("重置",999997),
-                ("补偿丹",999996),
-                ("精品精力",19999),
-                ("上限",19998),
-                ("上品精力",1999),
-                ("修为",900),
-                ("福袋",400),
-                ("幸运点",199),
-                ("精力丹",199),
-                ("精力",199),
-                ("体力丹",98),
-                ("体力",98),
-                ("抹痕丹",20),
-                ("灵币",5),
-                ("仙币",5),
-                ("金币",2)
-            };
-        private static readonly Dictionary<string, int> map = new Dictionary<string, int>()
-            {
-                {"一",1},
-                {"二",2},
-                {"三",3}
-            };
-        //private static readonly Dictionary<int, string> selecterMap = new Dictionary<int, string>()
-        //    {
-        //        {1,"1 号"},
-        //        {2,"2 号"},
-        //        {3,"3 号"},
-        //        {4,"4 号"},
-        //        {5,"5 号"},
-        //        {6,"6 号"},
-        //        {7,"7 号"},
-        //        {8,"8 号"},
-        //        {9,"9 号"}
-        //    };
 
         public void refreshStart()
         {
@@ -77,31 +36,52 @@ namespace CultivationHouseTools
             for (int i = 1; i <= 9; i++)
             {
                 AutomationElement label = Common.getElById(shopWindow, $"Label_{i}");
-                Goods goods = new Goods();
-                goods.name = label.Current.Name;
-                goods.index = i;
+                Goods goods = new Goods(label.Current.Name, i, 0);
 
-                foreach (var rule in weightRules)
+                int weight = 0;
+                if (Dics.weightMap.TryGetValue(goods.name, out weight))
                 {
-                    if (goods.name.Contains(rule.Key))
+                    // 直接获取权重
+                    goods.weight = weight;
+                }
+                else
+                {
+                    (string key, int currentWeight) = Dics.weightRules.Find(x => goods.name.Contains(x.Key));
+                    if (key != null)
                     {
-                        goods.weight = rule.Weight;
-                        if (rule.Key == "修为" || rule.Key == "灵币" || rule.Key == "仙币" ||
-                            rule.Key == "精力" || rule.Key == "体力" || rule.Key == "幸运点" || rule.Key == "福袋")
+                        switch (key)
                         {
-                            Match m = Regex.Match(goods.name, @"\d+");
-                            int count = int.Parse(m.Value);
-                            goods.weight = goods.weight * count;
+                            case "修为":
+                            case "灵币":
+                            case "仙币":
+                            case "精力":
+                            case "体力":
+                            case "幸运点":
+                            case "福袋":
+                            case "属性":
+                                Match m = Regex.Match(goods.name, @"\d+");
+                                int count = int.Parse(m.Value);
+                                goods.weight = currentWeight * count;
+                                break;
+                            case "背景":
+                            case "头像":
+                                Match m2 = Regex.Match(goods.name, @"[一二三]");
+                                int count2 = Dics.levelMap[m2.Value];
+                                goods.weight = currentWeight * count2;
+                                break;
+                            case "体力丹":
+                            case "精力丹":
+                                Match m3 = Regex.Match(goods.name, @"[下中上精]品");
+                                int count3 = Dics.gradeMap[m3.Value];
+                                goods.weight = currentWeight * count3;
+                                break;
+                            default:
+                                goods.weight = currentWeight;
+                                break;
                         }
-                        if (rule.Key == "背景" || rule.Key == "头像")
-                        {
-                            Match m = Regex.Match(goods.name, @"[一二三]");
-                            int count = map[m.Value];
-                            goods.weight = goods.weight * count;
-                        }
-                        break;
                     }
                 }
+                
                 Common.addMessage(_form.message, $"{goods.ToString()}");
                 list.Add(goods);
             }
@@ -111,7 +91,7 @@ namespace CultivationHouseTools
             Common.addMessage(_form.message, $"选中{best.ToString()}");
 
             Common.setCombo(shopWindow, $"{best.index} 号");
-            Thread.Sleep(200);
+            Thread.Sleep(100);
 
             Common.clickButton(shopWindow, "领取物品");
         }
