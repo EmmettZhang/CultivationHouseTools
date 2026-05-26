@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CultivationHouseTools.actions;
+using CultivationHouseTools.lib;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,20 +19,39 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace CultivationHouseTools
 {
-    public partial class Form1 : Form
+    public partial class MainWindow : Form
     {
         private CancellationTokenSource _shopTokenSource;
         private CancellationTokenSource _tokenSource;
         private CancellationTokenSource _unknownTokenSource;
 
-        public Form1()
+        private AutoSignIn _autoSignIn;
+        private AutoHarvest _autoHarvest;
+        private AutoBoss _autoBoss;
+
+        public MainWindow()
         {
             InitializeComponent();
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            DailySet.dailyStatus = "自动日常已停止";
+            dailyStatus.Text = DailySet.dailyStatus;
+            dailyStatus.ForeColor = Color.Red;
 
+            DailySet.monday = false;
+            DailySet.tuesday = false;
+            DailySet.wednesday = false;
+            DailySet.thursday = false;
+            DailySet.friday = false;
+
+            DailySet.boss = "饕餮";
+            Common.addMessage(dailyMessage, DailySet.ToString());
+
+            _autoSignIn = new AutoSignIn(this);
+            _autoHarvest = new AutoHarvest(this);
+            _autoBoss = new AutoBoss(this);
         }
 
         private async void refresh_ClickAsync(object sender, EventArgs e)
@@ -266,6 +287,36 @@ namespace CultivationHouseTools
             _unknownTokenSource = null;
 
             Common.addMessage(message, "结束盲盒");
+        }
+
+        private void dailySet_Click(object sender, EventArgs e)
+        {
+            DailySetWindow dailySet = new DailySetWindow(this);
+            dailySet.Show();
+        }
+
+        private void dayTask_Click(object sender, EventArgs e)
+        {
+            if (DailySet.dailyStatus == "自动日常已停止")
+            {
+                DailySet.dailyStatus = "自动日常已开始";
+                dailyStatus.Text = DailySet.dailyStatus;
+                dailyStatus.ForeColor = Color.Green;
+
+                _autoSignIn.run();
+                _autoHarvest.run();
+                _autoBoss.run();
+            }
+            else if (DailySet.dailyStatus == "自动日常已开始")
+            {
+                DailySet.dailyStatus = "自动日常已停止";
+                dailyStatus.Text = DailySet.dailyStatus;
+                dailyStatus.ForeColor = Color.Red;
+
+                _autoSignIn.stop();
+                _autoHarvest.stop();
+                _autoBoss.stop();
+            }
         }
     }
 }

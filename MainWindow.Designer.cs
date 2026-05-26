@@ -1,6 +1,6 @@
 ﻿namespace CultivationHouseTools
 {
-    partial class Form1
+    partial class MainWindow
     {
         /// <summary>
         /// 必需的设计器变量。
@@ -49,11 +49,15 @@
             this.dayTask = new System.Windows.Forms.Button();
             this.unknownIndex = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
+            this.dailySet = new System.Windows.Forms.Button();
+            this.dailyMessage = new System.Windows.Forms.TextBox();
+            this.dailyStatus = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // refresh
             // 
-            this.refresh.Location = new System.Drawing.Point(304, 44);
+            this.refresh.Location = new System.Drawing.Point(300, 44);
             this.refresh.Name = "refresh";
             this.refresh.Size = new System.Drawing.Size(75, 23);
             this.refresh.TabIndex = 0;
@@ -63,7 +67,7 @@
             // 
             // flip
             // 
-            this.flip.Location = new System.Drawing.Point(304, 117);
+            this.flip.Location = new System.Drawing.Point(300, 117);
             this.flip.Name = "flip";
             this.flip.Size = new System.Drawing.Size(75, 23);
             this.flip.TabIndex = 1;
@@ -112,9 +116,9 @@
             this.title.ForeColor = System.Drawing.SystemColors.WindowText;
             this.title.Location = new System.Drawing.Point(95, 12);
             this.title.Name = "title";
-            this.title.Size = new System.Drawing.Size(193, 21);
+            this.title.Size = new System.Drawing.Size(103, 21);
             this.title.TabIndex = 6;
-            this.title.Text = "修仙小屋 v2.29.0";
+            this.title.Text = "修仙小屋 v2.30.0";
             // 
             // label4
             // 
@@ -127,7 +131,7 @@
             // 
             // stopRefresh
             // 
-            this.stopRefresh.Location = new System.Drawing.Point(304, 73);
+            this.stopRefresh.Location = new System.Drawing.Point(300, 73);
             this.stopRefresh.Name = "stopRefresh";
             this.stopRefresh.Size = new System.Drawing.Size(75, 23);
             this.stopRefresh.TabIndex = 8;
@@ -137,7 +141,7 @@
             // 
             // stopFlip
             // 
-            this.stopFlip.Location = new System.Drawing.Point(304, 146);
+            this.stopFlip.Location = new System.Drawing.Point(300, 146);
             this.stopFlip.Name = "stopFlip";
             this.stopFlip.Size = new System.Drawing.Size(75, 23);
             this.stopFlip.TabIndex = 9;
@@ -147,12 +151,12 @@
             // 
             // message
             // 
-            this.message.Location = new System.Drawing.Point(14, 267);
+            this.message.Location = new System.Drawing.Point(12, 267);
             this.message.Multiline = true;
             this.message.Name = "message";
             this.message.ReadOnly = true;
             this.message.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.message.Size = new System.Drawing.Size(377, 266);
+            this.message.Size = new System.Drawing.Size(276, 266);
             this.message.TabIndex = 10;
             // 
             // shopNum
@@ -175,7 +179,7 @@
             // 
             // stopUnknownBox
             // 
-            this.stopUnknownBox.Location = new System.Drawing.Point(304, 219);
+            this.stopUnknownBox.Location = new System.Drawing.Point(300, 219);
             this.stopUnknownBox.Name = "stopUnknownBox";
             this.stopUnknownBox.Size = new System.Drawing.Size(75, 23);
             this.stopUnknownBox.TabIndex = 17;
@@ -212,7 +216,7 @@
             // 
             // unknownBox
             // 
-            this.unknownBox.Location = new System.Drawing.Point(304, 190);
+            this.unknownBox.Location = new System.Drawing.Point(300, 190);
             this.unknownBox.Name = "unknownBox";
             this.unknownBox.Size = new System.Drawing.Size(75, 23);
             this.unknownBox.TabIndex = 13;
@@ -222,12 +226,13 @@
             // 
             // dayTask
             // 
-            this.dayTask.Location = new System.Drawing.Point(304, 11);
+            this.dayTask.Location = new System.Drawing.Point(300, 11);
             this.dayTask.Name = "dayTask";
             this.dayTask.Size = new System.Drawing.Size(75, 23);
             this.dayTask.TabIndex = 18;
-            this.dayTask.Text = "一键日常";
+            this.dayTask.Text = "自动日常";
             this.dayTask.UseVisualStyleBackColor = true;
+            this.dayTask.Click += new System.EventHandler(this.dayTask_Click);
             // 
             // unknownIndex
             // 
@@ -247,11 +252,56 @@
             this.label8.TabIndex = 19;
             this.label8.Text = "指定盲盒";
             // 
-            // Form1
+            // dailySet
+            // 
+            this.dailySet.Location = new System.Drawing.Point(384, 11);
+            this.dailySet.Name = "dailySet";
+            this.dailySet.Size = new System.Drawing.Size(75, 23);
+            this.dailySet.TabIndex = 21;
+            this.dailySet.Text = "日常配置";
+            this.dailySet.UseVisualStyleBackColor = true;
+            this.dailySet.Click += new System.EventHandler(this.dailySet_Click);
+            // 
+            // dailyMessage
+            // 
+            this.dailyMessage.Location = new System.Drawing.Point(294, 396);
+            this.dailyMessage.Multiline = true;
+            this.dailyMessage.Name = "dailyMessage";
+            this.dailyMessage.ReadOnly = true;
+            this.dailyMessage.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.dailyMessage.Size = new System.Drawing.Size(165, 137);
+            this.dailyMessage.TabIndex = 22;
+            // 
+            // dailyStatus
+            // 
+            this.dailyStatus.AutoSize = true;
+            this.dailyStatus.Location = new System.Drawing.Point(204, 16);
+            this.dailyStatus.Name = "dailyStatus";
+            this.dailyStatus.Size = new System.Drawing.Size(89, 12);
+            this.dailyStatus.TabIndex = 23;
+            this.dailyStatus.Text = "自动日常未开始";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(294, 267);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.ReadOnly = true;
+            this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textBox1.Size = new System.Drawing.Size(165, 123);
+            this.textBox1.TabIndex = 25;
+            this.textBox1.Text = "自动日常说明\r\n每日八点自动签到、葫芦签到、播撒灵露、门派演武、报名boss、购买金币精力和金币福袋、购买每日兑换。\r\n每日八点十分、十三点十分自动收割并播种门派" +
+    "后山。\r\n每日十六点自动获取boss结果。\r\n每周一八点自动收获葫芦。";
+            // 
+            // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(403, 545);
+            this.ClientSize = new System.Drawing.Size(471, 545);
+            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.dailyStatus);
+            this.Controls.Add(this.dailyMessage);
+            this.Controls.Add(this.dailySet);
             this.Controls.Add(this.unknownIndex);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.dayTask);
@@ -273,7 +323,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.flip);
             this.Controls.Add(this.refresh);
-            this.Name = "Form1";
+            this.Name = "MainWindow";
             this.Text = "CultivationHouseTools";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
@@ -304,6 +354,10 @@
         private System.Windows.Forms.Button dayTask;
         private System.Windows.Forms.TextBox unknownIndex;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Button dailySet;
+        public System.Windows.Forms.TextBox dailyMessage;
+        private System.Windows.Forms.Label dailyStatus;
+        public System.Windows.Forms.TextBox textBox1;
     }
 }
 

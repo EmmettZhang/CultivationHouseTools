@@ -49,22 +49,35 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AutoFlip.cs" />
-    <Compile Include="AutoRefreshShop.cs" />
-    <Compile Include="Common.cs" />
-    <Compile Include="Form1.cs">
+    <Compile Include="actions\AutoBoss.cs" />
+    <Compile Include="actions\AutoFlip.cs" />
+    <Compile Include="actions\AutoHarvest.cs" />
+    <Compile Include="actions\AutoRefreshShop.cs" />
+    <Compile Include="actions\AutoSignIn.cs" />
+    <Compile Include="utils\Common.cs" />
+    <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="MainWindow.Designer.cs">
+      <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="windows\DailySetWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="windows\DailySetWindow.Designer.cs">
+      <DependentUpon>DailySetWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="lib\DailySet.cs" />
     <Compile Include="lib\Dics.cs" />
     <Compile Include="Po\Goods.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WinApi.cs" />
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="utils\WinApi.cs" />
+    <EmbeddedResource Include="MainWindow.resx">
+      <DependentUpon>MainWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="windows\DailySetWindow.resx">
+      <DependentUpon>DailySetWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

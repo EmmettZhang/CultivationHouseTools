@@ -18,9 +18,9 @@ namespace CultivationHouseTools
 {
     internal class AutoRefreshShop
     {
-        private Form1 _form;
+        private MainWindow _form;
 
-        public AutoRefreshShop(Form1 form)
+        public AutoRefreshShop(MainWindow form)
         {
             _form = form;
         }
@@ -59,6 +59,7 @@ namespace CultivationHouseTools
                             case "幸运点":
                             case "福袋":
                             case "属性":
+                            case "金币":
                                 Match m = Regex.Match(goods.name, @"\d+");
                                 int count = int.Parse(m.Value);
                                 goods.weight = currentWeight * count;
