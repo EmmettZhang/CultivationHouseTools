@@ -31,10 +31,37 @@ namespace CultivationHouseTools
 
             return el;
         }
+        public static AutomationElement getButton(AutomationElement window, string title, int index)
+        {
+            AutomationElementCollection els = window.FindAll(
+                        TreeScope.Descendants,
+                        new AndCondition(
+                            new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Button),
+                            new PropertyCondition(AutomationElement.NameProperty, title)
+                        )
+                    );
+
+            return els[index];
+        }
 
         public static void clickButton(AutomationElement window, string title)
         {
             AutomationElement button = getButton(window, title);
+            if (button != null)
+            {
+                InvokePattern pattern = button.GetCurrentPattern(InvokePattern.Pattern) as InvokePattern;
+
+                pattern.Invoke();
+            }
+            else
+            {
+                System.Windows.Forms.MessageBox.Show($"未找到按钮: {title}");
+            }
+        }
+
+        public static void clickButton(AutomationElement window, string title, int index)
+        {
+            AutomationElement button = getButton(window, title, index);
             if (button != null)
             {
                 InvokePattern pattern = button.GetCurrentPattern(InvokePattern.Pattern) as InvokePattern;
@@ -105,6 +132,24 @@ namespace CultivationHouseTools
             {
                 System.Windows.Forms.MessageBox.Show($"未找到按钮: {id}");
             }
+        }
+
+        public static void changeTab(AutomationElement window, string name, int index)
+        {
+            AutomationElementCollection automationElementCollection = window.FindAll(
+                    TreeScope.Descendants,
+                    new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Tab)
+                );
+
+            AutomationElement item = automationElementCollection[index].FindFirst(
+                TreeScope.Descendants,
+
+                new PropertyCondition(AutomationElement.NameProperty, name)
+            );
+
+            SelectionItemPattern select = item.GetCurrentPattern(SelectionItemPattern.Pattern) as SelectionItemPattern;
+
+            select.Select();
         }
 
         public static void clickLabelById(AutomationElement window, string id)

@@ -290,8 +290,8 @@
             this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBox1.Size = new System.Drawing.Size(165, 123);
             this.textBox1.TabIndex = 25;
-            this.textBox1.Text = "自动日常说明\r\n每日八点自动签到、葫芦签到、播撒灵露、门派演武、报名boss、购买金币精力和金币福袋、购买每日兑换。\r\n每日八点十分、十三点十分自动收割并播种门派" +
-    "后山。\r\n每日十六点自动获取boss结果。\r\n每周一八点自动收获葫芦。";
+            this.textBox1.Text = "自动日常说明\r\n每日八点自动签到、葫芦签到、播撒灵露、门派演武、报名boss、购买金币精力和金币福袋、购买仙币幸运点和福袋、购买每日兑换，周一八点自动收获葫芦。\r" +
+    "\n每日八点十分、十三点十分自动收割并播种门派后山。\r\n每日十六点自动获取boss结果，周五十六点自动获取本周分成。";
             // 
             // MainWindow
             // 
@@ -339,7 +339,7 @@
         private System.Windows.Forms.TextBox flipNum;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox title;
+        public System.Windows.Forms.TextBox title;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button stopRefresh;
         private System.Windows.Forms.Button stopFlip;

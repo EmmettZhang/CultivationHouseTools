@@ -25,9 +25,9 @@ namespace CultivationHouseTools
         private CancellationTokenSource _tokenSource;
         private CancellationTokenSource _unknownTokenSource;
 
-        private AutoSignIn _autoSignIn;
+        private AutoEight _autoSignIn;
         private AutoHarvest _autoHarvest;
-        private AutoBoss _autoBoss;
+        private AutoSixteen _autoBoss;
 
         public MainWindow()
         {
@@ -47,11 +47,13 @@ namespace CultivationHouseTools
             DailySet.friday = false;
 
             DailySet.boss = "饕餮";
+            DailySet.luckyCount = "是";
+            DailySet.happyBag = "否";
             Common.addMessage(dailyMessage, DailySet.ToString());
 
-            _autoSignIn = new AutoSignIn(this);
+            _autoSignIn = new AutoEight(this);
             _autoHarvest = new AutoHarvest(this);
-            _autoBoss = new AutoBoss(this);
+            _autoBoss = new AutoSixteen(this);
         }
 
         private async void refresh_ClickAsync(object sender, EventArgs e)
@@ -175,6 +177,9 @@ namespace CultivationHouseTools
 
         private void stopFlip_Click(object sender, EventArgs e)
         {
+            Common.addMessage(message, "敬请期待！");
+            return;
+
             _tokenSource?.Cancel();
 
             _tokenSource = null;
@@ -184,6 +189,9 @@ namespace CultivationHouseTools
 
         private async void unknownBox_Click(object sender, EventArgs e)
         {
+            Common.addMessage(message, "敬请期待！");
+            return;
+
             if (_unknownTokenSource != null)
             {
                 Common.addMessage(message, "当前无法开始盲盒，请先结束盲盒");
@@ -282,6 +290,10 @@ namespace CultivationHouseTools
 
         private void stopUnknownBox_Click(object sender, EventArgs e)
         {
+
+            Common.addMessage(message, "敬请期待！");
+            return;
+
             _unknownTokenSource?.Cancel();
 
             _unknownTokenSource = null;

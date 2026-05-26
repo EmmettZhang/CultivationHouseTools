@@ -49,11 +49,11 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="actions\AutoBoss.cs" />
+    <Compile Include="actions\AutoSixteen.cs" />
     <Compile Include="actions\AutoFlip.cs" />
     <Compile Include="actions\AutoHarvest.cs" />
     <Compile Include="actions\AutoRefreshShop.cs" />
-    <Compile Include="actions\AutoSignIn.cs" />
+    <Compile Include="actions\AutoEight.cs" />
     <Compile Include="utils\Common.cs" />
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>

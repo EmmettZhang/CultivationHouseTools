@@ -8,6 +8,16 @@ namespace CultivationHouseTools.lib
 {
     public static class Dics
     {
+        public static readonly Dictionary<string, int> bossMap = new Dictionary<string, int>()
+            {
+                {"饕餮",0},
+                {"穷奇",1},
+                {"毕方",2},
+                {"朱厌",3},
+                {"麒麟",4},
+                {"貔貅",5},
+                {"白泽",6}
+            };
         public static readonly List<(string Key, int Weight)> weightRules =
             new List<(string, int)>
             {
