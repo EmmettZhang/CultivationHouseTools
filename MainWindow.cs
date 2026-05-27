@@ -28,6 +28,7 @@ namespace CultivationHouseTools
         private AutoEight _autoSignIn;
         private AutoHarvest _autoHarvest;
         private AutoSixteen _autoBoss;
+        private AutoTwelve _autoTwelve;
 
         public MainWindow()
         {
@@ -319,6 +320,7 @@ namespace CultivationHouseTools
                 _autoSignIn.run();
                 _autoHarvest.run();
                 _autoBoss.run();
+                _autoTwelve.run();
             }
             else if (DailySet.dailyStatus == "自动日常已开始")
             {
@@ -329,6 +331,7 @@ namespace CultivationHouseTools
                 _autoSignIn.stop();
                 _autoHarvest.stop();
                 _autoBoss.stop();
+                _autoTwelve.stop();
             }
         }
     }
