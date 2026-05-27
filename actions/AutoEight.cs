@@ -137,7 +137,7 @@ namespace CultivationHouseTools.actions
                     {
                         Common.clickButton(mainWindow, "点击兑换10精力（7000金币）");
                     }
-                    if (i < 5)
+                    if (i >= 3)
                     {
                         Common.clickButton(mainWindow, "点击兑换1精力（700金币）");
                     }
