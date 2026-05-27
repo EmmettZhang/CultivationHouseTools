@@ -42,6 +42,8 @@
             this.label4 = new System.Windows.Forms.Label();
             this.happyBag = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
+            this.attackMethod = new System.Windows.Forms.ComboBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -81,7 +83,7 @@
             // 
             // setConfirm
             // 
-            this.setConfirm.Location = new System.Drawing.Point(182, 267);
+            this.setConfirm.Location = new System.Drawing.Point(182, 304);
             this.setConfirm.Name = "setConfirm";
             this.setConfirm.Size = new System.Drawing.Size(75, 23);
             this.setConfirm.TabIndex = 4;
@@ -190,11 +192,34 @@
             this.label5.TabIndex = 13;
             this.label5.Text = "福袋";
             // 
+            // attackMethod
+            // 
+            this.attackMethod.FormattingEnabled = true;
+            this.attackMethod.Items.AddRange(new object[] {
+            "物攻",
+            "道攻"});
+            this.attackMethod.Location = new System.Drawing.Point(136, 260);
+            this.attackMethod.Name = "attackMethod";
+            this.attackMethod.Size = new System.Drawing.Size(121, 20);
+            this.attackMethod.TabIndex = 16;
+            this.attackMethod.Text = "物攻";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(27, 263);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(89, 12);
+            this.label6.TabIndex = 15;
+            this.label6.Text = "真Boss攻击方式";
+            // 
             // DailySetWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(290, 307);
+            this.ClientSize = new System.Drawing.Size(290, 353);
+            this.Controls.Add(this.attackMethod);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.happyBag);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
@@ -211,6 +236,7 @@
             this.Controls.Add(this.label1);
             this.Name = "DailySetWindow";
             this.Text = "DailySet";
+            this.Load += new System.EventHandler(this.DailySetWindow_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -232,5 +258,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ComboBox happyBag;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.ComboBox attackMethod;
+        private System.Windows.Forms.Label label6;
     }
 }

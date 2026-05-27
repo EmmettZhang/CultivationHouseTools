@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CultivationHouseTools.lib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,16 +9,16 @@ using System.Windows.Automation;
 
 namespace CultivationHouseTools.actions
 {
-    internal class AutoSixteen
+    internal class AutoTwelve
     {
         private CancellationTokenSource _cts;
         private Task _task;
         private Random _random = new Random();
 
         private MainWindow _form;
-        private static List<TimeSpan> times = new List<TimeSpan>() { new TimeSpan(16, 0, 0) };
+        private static List<TimeSpan> times = new List<TimeSpan>() { new TimeSpan(12, 0, 5) };
 
-        public AutoSixteen(MainWindow form)
+        public AutoTwelve(MainWindow form)
         {
             _form = form;
         }
@@ -26,7 +27,7 @@ namespace CultivationHouseTools.actions
         {
             if (_cts != null)
             {
-                Common.addMessage(_form.dailyMessage, "自动Boss已开始，请先停止");
+                Common.addMessage(_form.dailyMessage, "自动真Boss已开始，请先停止");
                 return;
             }
 
@@ -34,7 +35,7 @@ namespace CultivationHouseTools.actions
 
             _task = Task.Run(() => RunSchedule(_cts.Token));
 
-            Common.addMessage(_form.dailyMessage, "自动Boss已开始");
+            Common.addMessage(_form.dailyMessage, "自动真Boss已开始");
         }
 
         private async Task RunSchedule(CancellationToken token)
@@ -44,8 +45,8 @@ namespace CultivationHouseTools.actions
                 DateTime now = DateTime.Now;
 
                 DateTime? next = null;
-                // -300~300 秒随机浮动
-                int jitter = _random.Next(-300, 300);
+                // 0~30 秒随机浮动
+                int jitter = _random.Next(0, 30);
 
                 foreach (var t in times)
                 {
@@ -65,7 +66,7 @@ namespace CultivationHouseTools.actions
 
                 TimeSpan wait = next.Value - now;
 
-                Common.addMessage(_form.dailyMessage, "自动Boss下次执行：" + next.Value);
+                Common.addMessage(_form.dailyMessage, "自动真Boss下次执行：" + next.Value);
 
                 await Task.Delay(wait, token);
 
@@ -89,26 +90,32 @@ namespace CultivationHouseTools.actions
             {
                 // 自动获取boss结果
                 Common.changeTab(mainWindow, "BOSS", 0);
-                Common.clickButton(mainWindow, "获取结果");
+                Common.clickButton(mainWindow, "真·BOSS烛龙");
+
+                AutomationElement bossWindow = Common.getWindow("真·世界BOSS");
                 // 1-3秒随机偏移
                 Thread.Sleep(new Random().Next(1000, 3000));
 
-                // 如果是周五，自动获取门派分成
-                if (DateTime.Now.DayOfWeek == DayOfWeek.Friday)
-                {
-                    Common.changeTab(mainWindow, "门派", 0);
-                    Common.changeTab(mainWindow, "分 成", 1);
-                    Common.clickButton(mainWindow, "查看本周分成");
-                    // 1-3秒随机偏移
-                    Thread.Sleep(new Random().Next(1000, 3000));
-                    Common.clickButton(mainWindow, "领取我的本周分成");
+                if (bossWindow != null) {
+                    if (DailySet.attackMethod == "物攻")
+                    {
+                        Common.clickButton(bossWindow, "3秒自动物理攻击");
+                    }
+                    else if (DailySet.attackMethod == "道攻")
+                    {
+                        Common.clickButton(bossWindow, "3秒自动道术攻击");
+                    }
+
+                    // 等待十分钟，确保能打完，加5-10秒随机偏移，避免每次都在同一时间点点击抽奖
+                    Thread.Sleep((10 * 60 * 1000) + new Random().Next(5000, 10000));
+                    Common.clickButton(bossWindow, "抽取奖励");
                 }
             }
             else
             {
                 Common.addMessage(_form.dailyMessage, "未找到修仙小屋窗口，请确保游戏正在运行并且窗口标题正确");
             }
-            
+
         }
 
         public void stop()
@@ -117,7 +124,7 @@ namespace CultivationHouseTools.actions
             {
                 _cts.Cancel();
                 _cts = null;
-                Common.addMessage(_form.dailyMessage, "自动Boss已停止");
+                Common.addMessage(_form.dailyMessage, "自动真Boss已停止");
             }
         }
     }

@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using System.Windows.Automation;
 using System.Windows.Forms;
 using CultivationHouseTools.lib;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace CultivationHouseTools.actions
 {
@@ -18,6 +17,7 @@ namespace CultivationHouseTools.actions
 
         private MainWindow _form;
         private static List<TimeSpan> times = new List<TimeSpan>() { new TimeSpan(8, 0, 0) };
+        private Random _random = new Random();
 
         public AutoEight(MainWindow form)
         {
@@ -46,6 +46,8 @@ namespace CultivationHouseTools.actions
                 DateTime now = DateTime.Now;
 
                 DateTime? next = null;
+                // -300~300 秒随机浮动
+                int jitter = _random.Next(-300, 300);
 
                 foreach (var t in times)
                 {
@@ -53,14 +55,14 @@ namespace CultivationHouseTools.actions
 
                     if (dt > now)
                     {
-                        next = dt;
+                        next = dt.AddSeconds(jitter);
                         break;
                     }
                 }
 
                 if (next == null)
                 {
-                    next = now.Date.AddDays(1).Add(times[0]);
+                    next = now.Date.AddDays(1).Add(times[0]).AddSeconds(jitter);
                 }
 
                 TimeSpan wait = next.Value - now;
@@ -89,44 +91,51 @@ namespace CultivationHouseTools.actions
             {
                 // 签到弹窗
                 Common.clickButton(mainWindow, "签到");
-                Thread.Sleep(500); // 等待弹窗打开
+                Thread.Sleep(new Random().Next(500, 1000));
                 AutomationElement signWindow = Common.getWindow("签到");
                 Common.clickButton(signWindow, "点击签到");
+                // 1-3秒随机偏移
+                Thread.Sleep(new Random().Next(1000, 3000));
                 Common.clickButton(signWindow, "每日签到福利");
                 Common.clickButtonById(signWindow, "Close");
-                Thread.Sleep(500); // 等待弹窗打开
+                Thread.Sleep(new Random().Next(500, 1000));
 
                 // 葫芦
                 Common.clickButton(mainWindow, "仙玉商店");
-                Thread.Sleep(500); // 等待弹窗打开
+                Thread.Sleep(new Random().Next(500, 1000));
                 AutomationElement jadeWindow = Common.getWindow("仙玉商店");
                 Common.clickButton(jadeWindow, "宝葫芦玩法");
-                Thread.Sleep(500); // 等待弹窗打开
+                Thread.Sleep(new Random().Next(500, 1000));
                 AutomationElement huluWindow = Common.getWindow("宝葫芦");
                 Common.clickButton(huluWindow, "每日签到");
+                Thread.Sleep(new Random().Next(1000, 2000));
                 // 如果是周一
                 if (DateTime.Now.DayOfWeek == DayOfWeek.Monday)
                 {
                     Common.clickButton(huluWindow, "收获葫芦");
+                    Thread.Sleep(new Random().Next(1000, 2000));
                 }
                 Common.clickButton(huluWindow, "播撒全部灵露");
                 Common.clickButtonById(huluWindow, "Close");
                 Common.clickButtonById(jadeWindow, "Close");
-                Thread.Sleep(500);
+                Thread.Sleep(new Random().Next(500, 1000));
 
                 // 门派演武
                 Common.changeTab(mainWindow, "门派", 0);
                 Common.changeTab(mainWindow, "建 筑", 1);
                 Common.clickButton(mainWindow, "刷新数据");
-                Thread.Sleep(500);
+                // 1-3秒随机偏移
+                Thread.Sleep(new Random().Next(1000, 2000));
                 Common.clickButton(mainWindow, "演武");
-                Thread.Sleep(500);
+                // 1-3秒随机偏移
+                Thread.Sleep(new Random().Next(1000, 2000));
 
                 // 报名Boss
                 Common.changeTab(mainWindow, "BOSS", 0);
                 int bossIndex = Dics.bossMap[DailySet.boss];
                 Common.clickButton(mainWindow, "报名", bossIndex);
-                Thread.Sleep(500);
+                // 1-3秒随机偏移
+                Thread.Sleep(new Random().Next(1000, 2000));
 
                 // 购买金币精力和金币福袋
                 Common.changeTab(mainWindow, "兑换", 0);
@@ -141,8 +150,9 @@ namespace CultivationHouseTools.actions
                     {
                         Common.clickButton(mainWindow, "点击兑换1精力（700金币）");
                     }
+                    Thread.Sleep(new Random().Next(500, 1000));
                     Common.clickButton(mainWindow, "点击兑换1福袋（800金币）");
-                    Thread.Sleep(500);
+                    Thread.Sleep(new Random().Next(500, 1000));
                 }
 
                 // 购买仙币兑换
@@ -154,12 +164,13 @@ namespace CultivationHouseTools.actions
                         if (i < 5 && DailySet.luckyCount == "是")
                         {
                             Common.clickButton(mainWindow, "兑换10幸运点（1600仙币）");
+                            Thread.Sleep(new Random().Next(500, 1000));
                         }
                         if (DailySet.happyBag == "是")
                         {
                             Common.clickButton(mainWindow, "点击兑换1福袋（400仙币）");
+                            Thread.Sleep(new Random().Next(500, 1000));
                         }
-                        Thread.Sleep(500);
                     }
                 }
 

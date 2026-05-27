@@ -49,6 +49,7 @@ namespace CultivationHouseTools
             DailySet.boss = "饕餮";
             DailySet.luckyCount = "是";
             DailySet.happyBag = "否";
+            DailySet.attackMethod = "物攻";
             Common.addMessage(dailyMessage, DailySet.ToString());
 
             _autoSignIn = new AutoEight(this);

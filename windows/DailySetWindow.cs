@@ -22,6 +22,7 @@ namespace CultivationHouseTools
             boss.Text = DailySet.boss;
             luckyCount.Text = DailySet.luckyCount;
             happyBag.Text = DailySet.happyBag;
+            attackMethod.Text = DailySet.attackMethod;
             monday.Checked = DailySet.monday;
             tuesday.Checked = DailySet.tuesday;
             wednesday.Checked = DailySet.wednesday;
@@ -40,8 +41,14 @@ namespace CultivationHouseTools
             DailySet.boss = boss.Text;
             DailySet.luckyCount = luckyCount.Text;
             DailySet.happyBag = happyBag.Text;
+            DailySet.attackMethod = attackMethod.Text;
             Common.addMessage(_form.dailyMessage, $"已设置{DailySet.ToString()}");
             this.Close();
+        }
+
+        private void DailySetWindow_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

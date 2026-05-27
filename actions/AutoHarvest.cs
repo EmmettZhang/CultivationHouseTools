@@ -13,7 +13,8 @@ namespace CultivationHouseTools.actions
         private CancellationTokenSource _cts;
         private Task _task;
         private MainWindow _form;
-        private static List<TimeSpan> times = new List<TimeSpan>(){new TimeSpan(8,10,0), new TimeSpan(13,10,0)};
+        private static List<TimeSpan> times = new List<TimeSpan>(){new TimeSpan(8,15,0), new TimeSpan(13,15,0)};
+        private Random _random = new Random();
 
         public AutoHarvest(MainWindow form)
         {
@@ -42,6 +43,9 @@ namespace CultivationHouseTools.actions
                 DateTime now = DateTime.Now;
 
                 DateTime? next = null;
+                // -300~300 秒随机浮动
+                int jitter = _random.Next(-300, 300);
+
 
                 foreach (var t in times)
                 {
@@ -49,14 +53,14 @@ namespace CultivationHouseTools.actions
 
                     if (dt > now)
                     {
-                        next = dt;
+                        next = dt.AddSeconds(jitter);
                         break;
                     }
                 }
 
                 if (next == null)
                 {
-                    next = now.Date.AddDays(1).Add(times[0]);
+                    next = now.Date.AddDays(1).Add(times[0]).AddSeconds(jitter);
                 }
 
                 TimeSpan wait = next.Value - now;
@@ -85,10 +89,12 @@ namespace CultivationHouseTools.actions
             {
                 Common.changeTab(mainWindow, "门派", 0);
                 Common.changeTab(mainWindow, "后 山", 1);
+                // 1-3秒随机偏移
+                Thread.Sleep(new Random().Next(1000, 3000));
                 Common.clickButton(mainWindow, "一键收割");
-                Thread.Sleep(500);
+                // 1-3秒随机偏移
+                Thread.Sleep(new Random().Next(1000, 3000));
                 Common.clickButton(mainWindow, "一键种植");
-                Thread.Sleep(500);
             }
             else
             {
