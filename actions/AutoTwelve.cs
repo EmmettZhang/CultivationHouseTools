@@ -100,15 +100,19 @@ namespace CultivationHouseTools.actions
                     if (DailySet.attackMethod == "物攻")
                     {
                         Common.clickButton(bossWindow, "3秒自动物理攻击");
+                        Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},真BOSS自动物理攻击");
                     }
                     else if (DailySet.attackMethod == "道攻")
                     {
                         Common.clickButton(bossWindow, "3秒自动道术攻击");
+                        Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},真BOSS自动道术攻击");
                     }
 
                     // 等待十分钟，确保能打完，加5-10秒随机偏移，避免每次都在同一时间点点击抽奖
                     Thread.Sleep((10 * 60 * 1000) + new Random().Next(5000, 10000));
                     Common.clickButton(bossWindow, "抽取奖励");
+                    Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},抽取真BOSS奖励");
+                    Common.clickButtonById(bossWindow, "Close");
                 }
             }
             else

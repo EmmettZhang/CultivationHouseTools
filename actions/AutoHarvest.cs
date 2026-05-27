@@ -92,9 +92,11 @@ namespace CultivationHouseTools.actions
                 // 1-3秒随机偏移
                 Thread.Sleep(new Random().Next(1000, 3000));
                 Common.clickButton(mainWindow, "一键收割");
+                Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},收割后山");
                 // 1-3秒随机偏移
                 Thread.Sleep(new Random().Next(1000, 3000));
                 Common.clickButton(mainWindow, "一键种植");
+                Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},种植后山");
             }
             else
             {

@@ -48,16 +48,17 @@
             this.unknownBox = new System.Windows.Forms.Button();
             this.dayTask = new System.Windows.Forms.Button();
             this.unknownIndex = new System.Windows.Forms.TextBox();
-            this.label8 = new System.Windows.Forms.Label();
             this.dailySet = new System.Windows.Forms.Button();
             this.dailyMessage = new System.Windows.Forms.TextBox();
             this.dailyStatus = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // refresh
             // 
-            this.refresh.Location = new System.Drawing.Point(300, 44);
+            this.refresh.Location = new System.Drawing.Point(137, 12);
             this.refresh.Name = "refresh";
             this.refresh.Size = new System.Drawing.Size(75, 23);
             this.refresh.TabIndex = 0;
@@ -67,7 +68,7 @@
             // 
             // flip
             // 
-            this.flip.Location = new System.Drawing.Point(300, 117);
+            this.flip.Location = new System.Drawing.Point(137, 70);
             this.flip.Name = "flip";
             this.flip.Size = new System.Drawing.Size(75, 23);
             this.flip.TabIndex = 1;
@@ -78,7 +79,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(92, 135);
+            this.label1.Location = new System.Drawing.Point(78, 75);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(53, 12);
             this.label1.TabIndex = 2;
@@ -87,16 +88,16 @@
             // flipNum
             // 
             this.flipNum.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.flipNum.Location = new System.Drawing.Point(187, 130);
+            this.flipNum.Location = new System.Drawing.Point(78, 99);
             this.flipNum.Name = "flipNum";
-            this.flipNum.Size = new System.Drawing.Size(100, 23);
+            this.flipNum.Size = new System.Drawing.Size(53, 23);
             this.flipNum.TabIndex = 3;
             this.flipNum.Text = "3";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 135);
+            this.label2.Location = new System.Drawing.Point(19, 75);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(53, 12);
             this.label2.TabIndex = 4;
@@ -105,7 +106,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 62);
+            this.label3.Location = new System.Drawing.Point(19, 17);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(53, 12);
             this.label3.TabIndex = 5;
@@ -116,7 +117,7 @@
             this.title.ForeColor = System.Drawing.SystemColors.WindowText;
             this.title.Location = new System.Drawing.Point(95, 12);
             this.title.Name = "title";
-            this.title.Size = new System.Drawing.Size(103, 21);
+            this.title.Size = new System.Drawing.Size(149, 21);
             this.title.TabIndex = 6;
             this.title.Text = "修仙小屋 v2.30.0";
             // 
@@ -131,7 +132,7 @@
             // 
             // stopRefresh
             // 
-            this.stopRefresh.Location = new System.Drawing.Point(300, 73);
+            this.stopRefresh.Location = new System.Drawing.Point(137, 41);
             this.stopRefresh.Name = "stopRefresh";
             this.stopRefresh.Size = new System.Drawing.Size(75, 23);
             this.stopRefresh.TabIndex = 8;
@@ -141,7 +142,7 @@
             // 
             // stopFlip
             // 
-            this.stopFlip.Location = new System.Drawing.Point(300, 146);
+            this.stopFlip.Location = new System.Drawing.Point(137, 99);
             this.stopFlip.Name = "stopFlip";
             this.stopFlip.Size = new System.Drawing.Size(75, 23);
             this.stopFlip.TabIndex = 9;
@@ -151,27 +152,27 @@
             // 
             // message
             // 
-            this.message.Location = new System.Drawing.Point(12, 267);
+            this.message.Location = new System.Drawing.Point(12, 237);
             this.message.Multiline = true;
             this.message.Name = "message";
             this.message.ReadOnly = true;
             this.message.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.message.Size = new System.Drawing.Size(276, 266);
+            this.message.Size = new System.Drawing.Size(261, 296);
             this.message.TabIndex = 10;
             // 
             // shopNum
             // 
             this.shopNum.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.shopNum.Location = new System.Drawing.Point(188, 57);
+            this.shopNum.Location = new System.Drawing.Point(78, 41);
             this.shopNum.Name = "shopNum";
-            this.shopNum.Size = new System.Drawing.Size(100, 23);
+            this.shopNum.Size = new System.Drawing.Size(53, 23);
             this.shopNum.TabIndex = 12;
             this.shopNum.Text = "5";
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(93, 62);
+            this.label5.Location = new System.Drawing.Point(78, 17);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(53, 12);
             this.label5.TabIndex = 11;
@@ -179,7 +180,7 @@
             // 
             // stopUnknownBox
             // 
-            this.stopUnknownBox.Location = new System.Drawing.Point(300, 219);
+            this.stopUnknownBox.Location = new System.Drawing.Point(137, 157);
             this.stopUnknownBox.Name = "stopUnknownBox";
             this.stopUnknownBox.Size = new System.Drawing.Size(75, 23);
             this.stopUnknownBox.TabIndex = 17;
@@ -190,7 +191,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(12, 208);
+            this.label6.Location = new System.Drawing.Point(19, 133);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(53, 12);
             this.label6.TabIndex = 16;
@@ -199,16 +200,16 @@
             // unknownNum
             // 
             this.unknownNum.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.unknownNum.Location = new System.Drawing.Point(188, 190);
+            this.unknownNum.Location = new System.Drawing.Point(78, 157);
             this.unknownNum.Name = "unknownNum";
-            this.unknownNum.Size = new System.Drawing.Size(100, 23);
+            this.unknownNum.Size = new System.Drawing.Size(53, 23);
             this.unknownNum.TabIndex = 15;
             this.unknownNum.Text = "9999";
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(93, 195);
+            this.label7.Location = new System.Drawing.Point(78, 133);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(53, 12);
             this.label7.TabIndex = 14;
@@ -216,7 +217,7 @@
             // 
             // unknownBox
             // 
-            this.unknownBox.Location = new System.Drawing.Point(300, 190);
+            this.unknownBox.Location = new System.Drawing.Point(137, 128);
             this.unknownBox.Name = "unknownBox";
             this.unknownBox.Size = new System.Drawing.Size(75, 23);
             this.unknownBox.TabIndex = 13;
@@ -226,7 +227,7 @@
             // 
             // dayTask
             // 
-            this.dayTask.Location = new System.Drawing.Point(300, 11);
+            this.dayTask.Location = new System.Drawing.Point(279, 51);
             this.dayTask.Name = "dayTask";
             this.dayTask.Size = new System.Drawing.Size(75, 23);
             this.dayTask.TabIndex = 18;
@@ -237,24 +238,15 @@
             // unknownIndex
             // 
             this.unknownIndex.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.unknownIndex.Location = new System.Drawing.Point(188, 219);
+            this.unknownIndex.Location = new System.Drawing.Point(19, 157);
             this.unknownIndex.Name = "unknownIndex";
-            this.unknownIndex.Size = new System.Drawing.Size(100, 23);
+            this.unknownIndex.Size = new System.Drawing.Size(53, 23);
             this.unknownIndex.TabIndex = 20;
             this.unknownIndex.Text = "1";
             // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(93, 224);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(53, 12);
-            this.label8.TabIndex = 19;
-            this.label8.Text = "指定盲盒";
-            // 
             // dailySet
             // 
-            this.dailySet.Location = new System.Drawing.Point(384, 11);
+            this.dailySet.Location = new System.Drawing.Point(360, 51);
             this.dailySet.Name = "dailySet";
             this.dailySet.Size = new System.Drawing.Size(75, 23);
             this.dailySet.TabIndex = 21;
@@ -264,68 +256,78 @@
             // 
             // dailyMessage
             // 
-            this.dailyMessage.Location = new System.Drawing.Point(294, 396);
+            this.dailyMessage.Location = new System.Drawing.Point(279, 237);
             this.dailyMessage.Multiline = true;
             this.dailyMessage.Name = "dailyMessage";
             this.dailyMessage.ReadOnly = true;
             this.dailyMessage.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.dailyMessage.Size = new System.Drawing.Size(165, 137);
+            this.dailyMessage.Size = new System.Drawing.Size(180, 296);
             this.dailyMessage.TabIndex = 22;
             // 
             // dailyStatus
             // 
             this.dailyStatus.AutoSize = true;
-            this.dailyStatus.Location = new System.Drawing.Point(204, 16);
+            this.dailyStatus.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.dailyStatus.Location = new System.Drawing.Point(305, 14);
             this.dailyStatus.Name = "dailyStatus";
-            this.dailyStatus.Size = new System.Drawing.Size(89, 12);
+            this.dailyStatus.Size = new System.Drawing.Size(105, 14);
             this.dailyStatus.TabIndex = 23;
             this.dailyStatus.Text = "自动日常未开始";
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(294, 267);
+            this.textBox1.Location = new System.Drawing.Point(250, 80);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
             this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox1.Size = new System.Drawing.Size(165, 123);
+            this.textBox1.Size = new System.Drawing.Size(209, 151);
             this.textBox1.TabIndex = 25;
-            this.textBox1.Text = "自动日常说明\r\n每日八点自动签到、葫芦签到、播撒灵露、门派演武、报名boss、购买金币精力和金币福袋、购买仙币幸运点和福袋、购买每日兑换，周一八点自动收获葫芦。\r" +
-    "\n每日八点十分、十三点十分自动收割并播种门派后山。\r\n每日十六点自动获取boss结果，周五十六点自动获取本周分成。";
+            this.textBox1.Text = "自动日常说明\r\n每日八点自动签到、葫芦签到、播撒灵露、门派演武、报名boss、购买金币精力和金币福袋、购买仙币幸运点和福袋、购买每日兑换、发红包和福包，周一八点收" +
+    "获葫芦。\r\n每日八点十分、十三点十分收割并播种门派后山。\r\n每日十六点获取boss结果，周五十六点获取本周分成。\r\n每日十二点真BOSS。";
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.label3);
+            this.panel1.Controls.Add(this.refresh);
+            this.panel1.Controls.Add(this.flip);
+            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.flipNum);
+            this.panel1.Controls.Add(this.unknownIndex);
+            this.panel1.Controls.Add(this.label2);
+            this.panel1.Controls.Add(this.stopRefresh);
+            this.panel1.Controls.Add(this.stopFlip);
+            this.panel1.Controls.Add(this.stopUnknownBox);
+            this.panel1.Controls.Add(this.label5);
+            this.panel1.Controls.Add(this.label6);
+            this.panel1.Controls.Add(this.shopNum);
+            this.panel1.Controls.Add(this.unknownNum);
+            this.panel1.Controls.Add(this.unknownBox);
+            this.panel1.Controls.Add(this.label7);
+            this.panel1.Location = new System.Drawing.Point(12, 39);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(232, 192);
+            this.panel1.TabIndex = 26;
             // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(471, 545);
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.dailyStatus);
             this.Controls.Add(this.dailyMessage);
             this.Controls.Add(this.dailySet);
-            this.Controls.Add(this.unknownIndex);
-            this.Controls.Add(this.label8);
             this.Controls.Add(this.dayTask);
-            this.Controls.Add(this.stopUnknownBox);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.unknownNum);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.unknownBox);
-            this.Controls.Add(this.shopNum);
-            this.Controls.Add(this.label5);
             this.Controls.Add(this.message);
-            this.Controls.Add(this.stopFlip);
-            this.Controls.Add(this.stopRefresh);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.title);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.flipNum);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.flip);
-            this.Controls.Add(this.refresh);
             this.Name = "MainWindow";
             this.Text = "CultivationHouseTools";
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -344,7 +346,7 @@
         private System.Windows.Forms.Button stopRefresh;
         private System.Windows.Forms.Button stopFlip;
         public System.Windows.Forms.TextBox message;
-        private System.Windows.Forms.TextBox shopNum;
+        public System.Windows.Forms.TextBox shopNum;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button stopUnknownBox;
         private System.Windows.Forms.Label label6;
@@ -353,11 +355,11 @@
         private System.Windows.Forms.Button unknownBox;
         private System.Windows.Forms.Button dayTask;
         private System.Windows.Forms.TextBox unknownIndex;
-        private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Button dailySet;
         public System.Windows.Forms.TextBox dailyMessage;
         private System.Windows.Forms.Label dailyStatus;
         public System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Panel panel1;
     }
 }
 

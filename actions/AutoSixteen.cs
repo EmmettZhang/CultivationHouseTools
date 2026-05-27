@@ -34,7 +34,7 @@ namespace CultivationHouseTools.actions
 
             _task = Task.Run(() => RunSchedule(_cts.Token));
 
-            Common.addMessage(_form.dailyMessage, "自动Boss已开始");
+            Common.addMessage(_form.dailyMessage, "自动获取BOSS结果已开始");
         }
 
         private async Task RunSchedule(CancellationToken token)
@@ -65,7 +65,7 @@ namespace CultivationHouseTools.actions
 
                 TimeSpan wait = next.Value - now;
 
-                Common.addMessage(_form.dailyMessage, "自动Boss下次执行：" + next.Value);
+                Common.addMessage(_form.dailyMessage, "自动获取BOSS结果下次执行：" + next.Value);
 
                 await Task.Delay(wait, token);
 
@@ -89,7 +89,8 @@ namespace CultivationHouseTools.actions
             {
                 // 自动获取boss结果
                 Common.changeTab(mainWindow, "BOSS", 0);
-                Common.clickButton(mainWindow, "获取结果");
+                Common.clickButton(mainWindow, "获 取 结 果");
+                Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},获取每日BOSS结果");
                 // 1-3秒随机偏移
                 Thread.Sleep(new Random().Next(1000, 3000));
 
@@ -102,6 +103,7 @@ namespace CultivationHouseTools.actions
                     // 1-3秒随机偏移
                     Thread.Sleep(new Random().Next(1000, 3000));
                     Common.clickButton(mainWindow, "领取我的本周分成");
+                    Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},获取门派每周分成");
                 }
             }
             else
@@ -117,7 +119,7 @@ namespace CultivationHouseTools.actions
             {
                 _cts.Cancel();
                 _cts = null;
-                Common.addMessage(_form.dailyMessage, "自动Boss已停止");
+                Common.addMessage(_form.dailyMessage, "自动获取Boss结果已停止");
             }
         }
     }
