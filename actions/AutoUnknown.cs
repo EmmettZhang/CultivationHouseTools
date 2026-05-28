@@ -21,6 +21,9 @@ namespace CultivationHouseTools.actions
         private int _cursor = 0;
         private Random _rnd = new Random();
         private List<int> _order;
+        private int timeoutMs = 10000;
+        private int interval = 100;
+        private int elapsed = 0;
 
         public AutoUnknown(MainWindow form)
         {
@@ -46,14 +49,29 @@ namespace CultivationHouseTools.actions
             {
                 // 关闭幸运商店窗口，以备重新打开重置状态
                 Common.clickButtonById(exit, "Close");
-                Thread.Sleep(1000);
             }
 
             AutomationElement mainWindow = Common.getWindow(_form.title.Text.Trim());
             Common.clickButton(mainWindow, "心愿盲盒");
-            Thread.Sleep(1000);
+            AutomationElement window = null;
+            while (elapsed < timeoutMs)
+            {
+                window = Common.getWindow("心愿盲盒");
 
-            AutomationElement window = Common.getWindow("心愿盲盒");
+                if (window != null)
+                    break;
+
+                Thread.Sleep(interval);
+                elapsed += interval;
+            }
+
+
+            if (window == null)
+            {
+                Common.addMessage(_form.message, "窗口未启动");
+                return;
+            }
+
             Common.clickButton(window, "最大化");
             int index = 0;
             switch (_form.unknownIndex.Text.Trim())
