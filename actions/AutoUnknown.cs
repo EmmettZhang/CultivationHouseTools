@@ -8,27 +8,19 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation;
-using System.Windows.Forms;
-using System.Xml.Linq;
-using System;
-using System.Runtime.InteropServices;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.Windows.Input;
+using CultivationHouseTools.lib;
 
 namespace CultivationHouseTools.actions
 {
+
     internal class AutoUnknown
     {
-        private const int TotalRows = 20;
-        private const int TotalCols = 20;
-
-        private const int CellWidth = 95;
-        private const int CellHeight = 70;
-
-        private const int GridWidth = TotalCols * CellWidth;     //1900
-        private const int GridHeight = TotalRows * CellHeight;   //1400
-
         private MainWindow _form;
         private CancellationTokenSource _shopTokenSource;
+        private int _cursor = 0;
+        private Random _rnd = new Random();
+        private List<int> _order;
 
         public AutoUnknown(MainWindow form)
         {
@@ -36,14 +28,19 @@ namespace CultivationHouseTools.actions
         }
 
         [DllImport("user32.dll")]
-        private static extern bool SetForegroundWindow(IntPtr hWnd);
-
-        [DllImport("user32.dll")]
-        static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+        static extern bool SetCursorPos(int X, int Y);
 
 
         public void run()
         {
+            string unknownIndex = _form.unknownIndex.Text.Trim();
+            // 如果不是1-10则报异常
+            if (unknownIndex == null)
+            {
+                Common.addMessage(_form.message, "请输入盲盒序号");
+                return;
+            }
+
             AutomationElement exit = Common.getWindow("心愿盲盒");
             if (exit != null)
             {
@@ -58,116 +55,272 @@ namespace CultivationHouseTools.actions
 
             AutomationElement window = Common.getWindow("心愿盲盒");
             Common.clickButton(window, "最大化");
-            Thread.Sleep(1000);
+            int index = 0;
+            switch (_form.unknownIndex.Text.Trim())
+            {
+                case "1":
+                    Common.clickButton(window, "切换盲盒1");
+                    index = 0;
+                    break;
+                case "2":
+                    Common.clickButton(window, "切换盲盒2");
+                    index = 1;
+                    break;
+                case "3":
+                    Common.clickButton(window, "切换盲盒3");
+                    index = 2;
+                    break;
+                case "4":
+                    Common.clickButton(window, "切换盲盒4");
+                    index = 3;
+                    break;
+                case "5":
+                    Common.clickButton(window, "切换盲盒5");
+                    index = 4;
+                    break;
+                case "6":
+                    Common.clickButton(window, "切换盲盒6");
+                    index = 5;
+                    break;
+                case "7":
+                    Common.clickButton(window, "切换盲盒7");
+                    index = 6;
+                    break;
+                case "8":
+                    Common.clickButton(window, "切换盲盒8");
+                    index = 7;
+                    break;
+                case "9":
+                    Common.clickButton(window, "切换盲盒9");
+                    index = 8;
+                    break;
+                case "10":
+                    Common.clickButton(window, "切换盲盒10");
+                    index = 9;
+                    break;
+                default:
+                    Common.addMessage(_form.message, "请输入有效盲盒序号");
+                    return;
+            }
 
-
-            var scrollViewer = window.FindFirst(
+            var scrollViewer = window.FindAll(
                     TreeScope.Descendants,
                     new PropertyCondition(
                         AutomationElement.ClassNameProperty,
-                        "ScrollViewer"));
+                        "ScrollViewer"))[index];
 
-            for (int i = 0; i < 10; i++)
+            _order = Enumerable.Range(1, 400).OrderBy(x => _rnd.Next()).ToList();
+            _cursor = 0;
+
+            string s = _form.unknownNum.Text.Trim();
+            if (int.TryParse(s, out int num))
             {
-                Random rnd = new Random();
+                for (int i = 0; i < num; i++)
+                {
 
-                int key = rnd.Next(1, 401);
-                Common.addMessage(_form.message, key.ToString());
+                    TryGetNext(out int key);
 
-                ScrollToCell(scrollViewer, key);
-                var p = GetCellCenter(scrollViewer, key);
+                    Point p = ClickCell(scrollViewer, key);
 
-                SetCursorPos((int)p.X, (int)p.Y);
+                    SetCursorPos((int)p.X, (int)p.Y);
 
-                Thread.Sleep(700);
+                    Thread.Sleep(750);
 
-                WinApi.LeftClick();
+                    WinApi.LeftClick();
 
-                Common.addMessage(_form.message, $"点击X:{p.X},Y{p.Y}");
+                    Common.addMessage(_form.message, $"点击第{key}个位置，X:{p.X},Y:{p.Y}");
+                }
+            }
+            else
+            {
+                Common.addMessage(_form.message, "盲盒次数请输入有效的整数");
+            }
+
+            //你没有钥匙，无法开启盲盒
+        }
+
+        public bool TryGetNext(out int value)
+        {
+            while (_cursor < _order.Count)
+            {
+                int v = _order[_cursor++];
+
+                if (UnknownLib.clickedSet.Add(getUnknownIndex() + v))
+                {
+                    value = v;
+                    return true;
+                }
+            }
+
+            value = -1;
+            return false;
+        }
+
+        private string getUnknownIndex()
+        {
+            switch (_form.unknownIndex.Text.Trim())
+            {
+                case "1":
+                    return "A";
+                case "2": 
+                    return "B";
+                case "3":
+                    return "C";
+                case "4":
+                    return "D";
+                case "5":
+                    return "E";
+                case "6":
+                    return "F";
+                case "7":
+                    return "G";
+                case "8":
+                    return "H";
+                case "9":
+                    return "I";
+                case "10":
+                    return "J";
+                default:
+                    return null;
             }
         }
 
-        public static void ScrollToCell(AutomationElement scrollViewer, int key)
+        private const int Rows = 20;
+        private const int Cols = 20;
+
+        private const int CellW = 95;
+        private const int CellH = 70;
+
+        private const int TotalW = Cols * CellW;   //1900
+        private const int TotalH = Rows * CellH;   //1400
+
+        //==================================================
+        // 主入口：点击某个格子
+        //==================================================
+        public static Point ClickCell(AutomationElement scrollViewer,int key)
         {
-            var sp = (ScrollPattern)scrollViewer.GetCurrentPattern(ScrollPattern.Pattern);
+            var sp = GetScrollPattern(scrollViewer);
 
-            int row = (key - 1) / 20;
-            int col = (key - 1) % 20;
+            int row = (key - 1) / Cols;
+            int col = (key - 1) % Cols;
 
-            double visibleRows = 20.0 * sp.Current.VerticalViewSize / 100.0;
+            // 1. 先确保滚动到目标附近
+            ScrollToCell(sp, row, col);
 
-            double visibleCols = 20.0 * sp.Current.HorizontalViewSize / 100.0;
+            // 2. 等待UI刷新
+            System.Threading.Thread.Sleep(150);
 
-            double firstRow = Math.Max(0, Math.Min(row - visibleRows / 2, 20 - visibleRows));
+            // 3. 获取最新滚动状态
+            var info = GetScrollInfo(sp);
 
-            double firstCol = Math.Max(0, Math.Min(col - visibleCols / 2, 20 - visibleCols));
+            // 4. 计算当前可见区域左上角
+            double offsetX = info.OffsetX;
+            double offsetY = info.OffsetY;
 
-            double vPercent = (20 - visibleRows) <= 0 ? 0 : firstRow / (20 - visibleRows) * 100;
+            // 5. 计算目标中心点（在Grid中的绝对位置）
+            double gridX = col * CellW + CellW / 2.0;
+            double gridY = row * CellH + CellH / 2.0;
 
-            double hPercent = (20 - visibleCols) <= 0 ? 0 : firstCol / (20 - visibleCols) * 100;
-
-            sp.SetScrollPercent(hPercent, vPercent);
-        }
-
-        public static Point GetCellCenter(AutomationElement scrollViewer, int key)
-        {
-            if (key < 1 || key > 400)
-                throw new ArgumentOutOfRangeException(nameof(key));
-
-            var sp = (ScrollPattern)scrollViewer.GetCurrentPattern(ScrollPattern.Pattern);
-
+            // 6. 转换为屏幕坐标
             var rect = scrollViewer.Current.BoundingRectangle;
 
-            //-----------------------------------
-            // 当前可视区域尺寸
-            //-----------------------------------
+            int x = (int)(rect.Left + (gridX - offsetX));
+            int y = (int)(rect.Top + (gridY - offsetY));
 
-            double visibleWidth = GridWidth * sp.Current.HorizontalViewSize / 100.0;
-
-            double visibleHeight = GridHeight * sp.Current.VerticalViewSize / 100.0;
-
-            //-----------------------------------
-            // 当前滚动偏移
-            //-----------------------------------
-
-            double maxOffsetX = Math.Max(0, GridWidth - visibleWidth);
-
-            double maxOffsetY = Math.Max(0, GridHeight - visibleHeight);
-
-            double offsetX = maxOffsetX * sp.Current.HorizontalScrollPercent / 100.0;
-
-            double offsetY = maxOffsetY * sp.Current.VerticalScrollPercent / 100.0;
-
-            //-----------------------------------
-            // 格子行列
-            //-----------------------------------
-
-            int row = (key - 1) / 20;
-            int col = (key - 1) % 20;
-
-            //-----------------------------------
-            // 格子中心在Grid中的坐标
-            //-----------------------------------
-
-            double gridX = col * CellWidth + CellWidth / 2.0;
-
-            double gridY = row * CellHeight + CellHeight / 2.0;
-
-            //-----------------------------------
-            // 转换为屏幕坐标
-            //-----------------------------------
-
-            double screenX = rect.Left + (gridX - offsetX);
-
-            double screenY = rect.Top + (gridY - offsetY);
-
-            return new Point((int)Math.Round(screenX), (int)Math.Round(screenY));
+            return new Point(x, y);
         }
 
-        [DllImport("user32.dll")]
-        static extern bool SetCursorPos(
-             int X,
-            int Y
-        );
+        //==================================================
+        // 滚动到目标格子附近
+        //==================================================
+        private static void ScrollToCell(ScrollPattern sp, int row, int col)
+        {
+            var info = GetScrollInfo(sp);
+
+            if (info.CanScrollH)
+            {
+                double targetCol = Math.Max(0, Math.Min(col - info.VisibleCols / 2, Cols - info.VisibleCols));
+
+                double hPercent = (Cols - info.VisibleCols) <= 0 ? 0 : targetCol / (Cols - info.VisibleCols) * 100;
+
+                SetSafe(sp, hPercent, null);
+            }
+
+            if (info.CanScrollV)
+            {
+                double targetRow = Math.Max(0, Math.Min(row - info.VisibleRows / 2, Rows - info.VisibleRows));
+
+                double vPercent = (Rows - info.VisibleRows) <= 0 ? 0 : targetRow / (Rows - info.VisibleRows) * 100;
+
+                SetSafe(sp, null, vPercent);
+            }
+        }
+
+        //==================================================
+        // 安全滚动（避免“无法接收焦点”）
+        //==================================================
+        private static void SetSafe(ScrollPattern sp, double? h, double? v)
+        {
+            try
+            {
+                sp.SetScrollPercent(
+                    h ?? sp.Current.HorizontalScrollPercent,
+                    v ?? sp.Current.VerticalScrollPercent);
+            }
+            catch
+            {
+                // fallback：鼠标滚轮
+            }
+        }
+
+        //==================================================
+        // 获取ScrollPattern
+        //==================================================
+        private static ScrollPattern GetScrollPattern(AutomationElement el)
+        {
+            return (ScrollPattern)el.GetCurrentPattern(ScrollPattern.Pattern);
+        }
+
+        //==================================================
+        // 获取滚动信息
+        //==================================================
+        private static ScrollInfo GetScrollInfo(ScrollPattern sp)
+        {
+            double visibleCols = Cols * sp.Current.HorizontalViewSize / 100.0;
+
+            double visibleRows = Rows * sp.Current.VerticalViewSize / 100.0;
+
+            double maxX = Math.Max(0, Cols - visibleCols);
+            double maxY = Math.Max(0, Rows - visibleRows);
+
+            double offsetX = maxX * sp.Current.HorizontalScrollPercent / 100.0;
+
+            double offsetY = maxY * sp.Current.VerticalScrollPercent / 100.0;
+
+            return new ScrollInfo
+            {
+                CanScrollH = sp.Current.HorizontallyScrollable,
+                CanScrollV = sp.Current.VerticallyScrollable,
+                VisibleCols = visibleCols,
+                VisibleRows = visibleRows,
+                OffsetX = offsetX * CellW,
+                OffsetY = offsetY * CellH
+            };
+        }
+
+        //==================================================
+        // 数据结构
+        //==================================================
+        private class ScrollInfo
+        {
+            public bool CanScrollH;
+            public bool CanScrollV;
+
+            public double VisibleCols;
+            public double VisibleRows;
+
+            public double OffsetX;
+            public double OffsetY;
+        }
     }
 }

@@ -56,6 +56,7 @@
     <Compile Include="actions\AutoEight.cs" />
     <Compile Include="actions\AutoTwelve.cs" />
     <Compile Include="actions\AutoUnknown.cs" />
+    <Compile Include="lib\UnknownLib.cs" />
     <Compile Include="utils\Common.cs" />
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>

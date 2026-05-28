@@ -60,6 +60,8 @@ namespace CultivationHouseTools
             _autoTwelve = new AutoTwelve(this);
             _autoRefreshShop = new AutoRefreshShop(this);
             _autoUnknown = new AutoUnknown(this);
+
+            UnknownLib.run();
         }
 
         private async void refresh_ClickAsync(object sender, EventArgs e)

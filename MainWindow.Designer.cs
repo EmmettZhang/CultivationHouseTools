@@ -204,7 +204,7 @@
             this.unknownNum.Name = "unknownNum";
             this.unknownNum.Size = new System.Drawing.Size(53, 23);
             this.unknownNum.TabIndex = 15;
-            this.unknownNum.Text = "9999";
+            this.unknownNum.Text = "50";
             // 
             // label7
             // 
@@ -350,16 +350,16 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button stopUnknownBox;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.TextBox unknownNum;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button unknownBox;
         private System.Windows.Forms.Button dayTask;
-        private System.Windows.Forms.TextBox unknownIndex;
         private System.Windows.Forms.Button dailySet;
         public System.Windows.Forms.TextBox dailyMessage;
         private System.Windows.Forms.Label dailyStatus;
         public System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Panel panel1;
+        public System.Windows.Forms.TextBox unknownIndex;
+        public System.Windows.Forms.TextBox unknownNum;
     }
 }
 
