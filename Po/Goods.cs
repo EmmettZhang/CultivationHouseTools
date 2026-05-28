@@ -26,7 +26,7 @@ namespace CultivationHouseTools
             this.weight = weight;
         }
 
-        public string ToString()
+        public override string ToString()
         {
             return $"{index}、name: {name}, weight: {weight}";
         }

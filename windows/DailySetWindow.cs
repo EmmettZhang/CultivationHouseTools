@@ -42,7 +42,7 @@ namespace CultivationHouseTools
             DailySet.luckyCount = luckyCount.Text;
             DailySet.happyBag = happyBag.Text;
             DailySet.attackMethod = attackMethod.Text;
-            Common.addMessage(_form.dailyMessage, $"已设置{DailySet.ToString()}");
+            Common.addMessage(_form.dailyMessage, $"已设置{DailySet.print()}");
             this.Close();
         }
 

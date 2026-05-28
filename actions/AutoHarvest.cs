@@ -43,8 +43,8 @@ namespace CultivationHouseTools.actions
                 DateTime now = DateTime.Now;
 
                 DateTime? next = null;
-                // -300~300 秒随机浮动
-                int jitter = _random.Next(-300, 300);
+                // 0~600 秒随机浮动
+                int jitter = _random.Next(0, 600);
 
 
                 foreach (var t in times)

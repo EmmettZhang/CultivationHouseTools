@@ -29,6 +29,7 @@ namespace CultivationHouseTools
         private AutoSixteen _autoBoss;
         private AutoTwelve _autoTwelve;
         private AutoRefreshShop _autoRefreshShop;
+        private AutoUnknown _autoUnknown;
 
         public MainWindow()
         {
@@ -51,13 +52,14 @@ namespace CultivationHouseTools
             DailySet.luckyCount = "是";
             DailySet.happyBag = "否";
             DailySet.attackMethod = "物攻";
-            Common.addMessage(dailyMessage, DailySet.ToString());
+            Common.addMessage(dailyMessage, DailySet.print());
 
             _autoSignIn = new AutoEight(this);
             _autoHarvest = new AutoHarvest(this);
             _autoBoss = new AutoSixteen(this);
             _autoTwelve = new AutoTwelve(this);
             _autoRefreshShop = new AutoRefreshShop(this);
+            _autoUnknown = new AutoUnknown(this);
         }
 
         private async void refresh_ClickAsync(object sender, EventArgs e)
@@ -106,103 +108,7 @@ namespace CultivationHouseTools
 
         private async void unknownBox_Click(object sender, EventArgs e)
         {
-            Common.addMessage(message, "敬请期待！");
-            return;
-
-            if (_unknownTokenSource != null)
-            {
-                Common.addMessage(message, "当前无法开始盲盒，请先结束盲盒");
-                return;
-            }
-
-            AutomationElement exit = Common.getWindow("心愿盲盒");
-            if (exit != null)
-            {
-                // 关闭幸运商店窗口，以备重新打开重置状态
-                Common.clickButtonById(exit, "Close");
-                Thread.Sleep(1000);
-            }
-
-            AutomationElement mainWindow = Common.getWindow(title.Text.Trim());
-            Common.clickButton(mainWindow, "心愿盲盒");
-            Thread.Sleep(1000); // 等待弹窗打开
-            AutomationElement shopWindow = Common.getWindow("心愿盲盒");
-
-            Common.clickButton(shopWindow, "切换盲盒1");
-            Common.clickButton(shopWindow, "刷新当前盲盒数据");
-
-            AutomationElementCollection controls =
-                shopWindow.FindAll(
-                    TreeScope.Descendants,
-                    Condition.TrueCondition
-                );
-
-            AutomationElementCollection labels =
-                    controls[0].FindAll(
-                        TreeScope.Descendants,
-                        Condition.TrueCondition
-                    );
-            Console.WriteLine(
-                labels.Count
-                );
-            foreach (
-                AutomationElement item
-                in labels)
-            {
-                Console.WriteLine(
-
-                "Name="
-                + item.Current.Name
-
-                + " | Type="
-
-                + item.Current
-                .ControlType
-                .ProgrammaticName
-
-                + " | ID="
-
-                + item.Current
-                .AutomationId
-
-                );
-            }
-
-
-            //string s = unknownNum.Text.Trim();
-            //if (int.TryParse(s, out int num))
-            //{
-            //    AutomationElement mainWindow = Common.getWindow(title.Text.Trim());
-            //    if (mainWindow != null)
-            //    {
-            //        // 打开幸运商店弹窗
-            //        Common.clickButton(mainWindow, "心愿盲盒");
-            //        Thread.Sleep(1000); // 等待弹窗打开
-
-            //        AutomationElement shopWindow = Common.getWindow("心愿盲盒");
-
-            //        _unknownTokenSource = new CancellationTokenSource();
-            //        int count = 0;
-
-            //        await Task.Run(() =>
-            //        {
-            //            while (_unknownTokenSource != null && !_unknownTokenSource.Token.IsCancellationRequested)
-            //            {
-
-            //            }
-            //        },
-            //        _unknownTokenSource.Token
-            //        );
-            //    }
-            //    else
-            //    {
-            //        Common.addMessage(message, "未找到修仙小屋窗口，请确保游戏正在运行并且窗口标题正确");
-            //    }
-            //}
-            //else
-            //{
-            //    Common.addMessage(message, "盲盒次数请输入有效的整数");
-            //}
+            _autoUnknown.run();
         }
 
         private void stopUnknownBox_Click(object sender, EventArgs e)

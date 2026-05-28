@@ -16,7 +16,7 @@ namespace CultivationHouseTools.actions
         private Task _task;
 
         private MainWindow _form;
-        private static List<TimeSpan> times = new List<TimeSpan>() { new TimeSpan(8, 0, 0) };
+        private static List<TimeSpan> times = new List<TimeSpan>() { new TimeSpan(7, 55, 0) };
         private Random _random = new Random();
 
         public AutoEight(MainWindow form)
@@ -46,8 +46,8 @@ namespace CultivationHouseTools.actions
                 DateTime now = DateTime.Now;
 
                 DateTime? next = null;
-                // -300~300 秒随机浮动
-                int jitter = _random.Next(-300, 300);
+                // 0~600 秒随机浮动
+                int jitter = _random.Next(0, 600);
 
                 foreach (var t in times)
                 {
