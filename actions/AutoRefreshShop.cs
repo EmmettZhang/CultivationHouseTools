@@ -20,6 +20,9 @@ namespace CultivationHouseTools
     {
         private MainWindow _form;
         private CancellationTokenSource _shopTokenSource;
+        private int timeoutMs = 10000;
+        private int interval = 100;
+        private int elapsed = 0;
 
         public AutoRefreshShop(MainWindow form)
         {
@@ -50,9 +53,26 @@ namespace CultivationHouseTools
                 {
                     // 打开幸运商店弹窗
                     Common.clickButton(mainWindow, "幸运商店");
-                    Thread.Sleep(1000); // 等待弹窗打开
 
-                    AutomationElement shopWindow = Common.getWindow("幸运商店");
+                    AutomationElement shopWindow = null;
+                    while (elapsed < timeoutMs)
+                    {
+                        shopWindow = Common.getWindow("幸运商店");
+
+                        if (shopWindow != null)
+                            break;
+
+                        Thread.Sleep(interval);
+                        elapsed += interval;
+                    }
+
+
+                    if (shopWindow == null)
+                    {
+                        Common.addMessage(_form.message, "窗口未启动");
+                        return;
+                    }
+
 
                     Common.clickButtonById(shopWindow, "ShuaXinButton");
 

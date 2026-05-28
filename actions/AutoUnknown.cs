@@ -33,8 +33,101 @@ namespace CultivationHouseTools.actions
         [DllImport("user32.dll")]
         static extern bool SetCursorPos(int X, int Y);
 
+        public async void run()
+        //{
+        //    if (_shopTokenSource != null)
+        //    {
+        //        Common.addMessage(_form.message, "当前无法开始购物，请先结束购物");
+        //        return;
+        //    }
 
-        public void run()
+        //    AutomationElement exit = Common.getWindow("幸运商店");
+        //    if (exit != null)
+        //    {
+        //        // 关闭幸运商店窗口，以备重新打开重置状态
+        //        Common.clickButtonById(exit, "Close");
+        //        Thread.Sleep(1000);
+        //    }
+
+        //    string s = _form.shopNum.Text.Trim();
+        //    if (int.TryParse(s, out int num))
+        //    {
+        //        AutomationElement mainWindow = Common.getWindow(_form.title.Text.Trim());
+        //        if (mainWindow != null)
+        //        {
+        //            // 打开幸运商店弹窗
+        //            Common.clickButton(mainWindow, "幸运商店");
+        //            Thread.Sleep(1000); // 等待弹窗打开
+
+        //            AutomationElement shopWindow = Common.getWindow("幸运商店");
+
+        //            Common.clickButtonById(shopWindow, "ShuaXinButton");
+
+        //            AutomationElement noCount = Common.getElById(shopWindow, "TiShiLabel");
+        //            if (noCount != null && noCount.Current.Name == "你的幸运点不足")
+        //            {
+        //                Common.addMessage(_form.message, "你的幸运点不足, 停止");
+        //                return;
+        //            }
+
+        //            // 领取后自动刷新
+        //            AutomationElement box = Common.getElById(shopWindow, "ziDongShuaXin_Name");
+        //            TogglePattern toggle = box.GetCurrentPattern(TogglePattern.Pattern) as TogglePattern;
+        //            bool isChecked = toggle.Current.ToggleState == ToggleState.On;
+        //            if (toggle.Current.ToggleState != ToggleState.On)
+        //            {
+        //                toggle.Toggle();
+        //            }
+
+        //            _shopTokenSource = new CancellationTokenSource();
+        //            int count = 0;
+
+        //            await Task.Run(() =>
+        //            {
+        //                while (_shopTokenSource != null && !_shopTokenSource.Token.IsCancellationRequested)
+        //                {
+        //                    Common.addMessage(_form.message, $"{DateTime.Now.ToString()}，第{count + 1}次执行自动化");
+
+        //                    if (count == num - 1)
+        //                    {
+        //                        toggle.Toggle();
+        //                    }
+        //                    refreshStart();
+        //                    Thread.Sleep(1000);
+        //                    count++;
+        //                    if (count >= num)
+        //                    {
+        //                        _shopTokenSource?.Cancel();
+        //                        _shopTokenSource = null;
+        //                        Common.addMessage(_form.message, $"已完成{num}次购物, 停止");
+        //                    }
+
+        //                    noCount = Common.getElById(shopWindow, "TiShiLabel");
+        //                    if (noCount != null && noCount.Current.Name == "你的幸运点不足")
+        //                    {
+        //                        _shopTokenSource?.Cancel();
+        //                        _shopTokenSource = null;
+
+        //                        Common.addMessage(_form.message, "你的幸运点不足, 停止");
+        //                    }
+        //                }
+        //            },
+        //            _shopTokenSource.Token
+        //            );
+        //        }
+        //        else
+        //        {
+        //            Common.addMessage(_form.message, "未找到修仙小屋窗口，请确保游戏正在运行并且窗口标题正确");
+        //        }
+        //    }
+        //    else
+        //    {
+        //        Common.addMessage(_form.message, "购物次数请输入有效的整数");
+        //    }
+        //}
+
+
+        //public void autoOpenUnknown()
         {
             string unknownIndex = _form.unknownIndex.Text.Trim();
             // 如果不是1-10则报异常

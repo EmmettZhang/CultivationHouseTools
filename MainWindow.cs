@@ -66,51 +66,38 @@ namespace CultivationHouseTools
 
         private async void refresh_ClickAsync(object sender, EventArgs e)
         {
-            _autoRefreshShop.run();
+            await Task.Run(() =>
+            {
+                _autoRefreshShop.run();
+            });
         }
 
-        private void stopRefresh_Click(object sender, EventArgs e)
+        private async void stopRefresh_Click(object sender, EventArgs e)
         {
-            _autoRefreshShop.stop();
+            await Task.Run(() =>
+            {
+                _autoRefreshShop.stop();
+            });
         }
 
-        private async void flip_Click(object sender, EventArgs e)
+        private void flip_Click(object sender, EventArgs e)
         {
             Common.addMessage(message, "敬请期待！");
             return;
-
-            if (_tokenSource != null)
-            {
-                Common.addMessage(message, "当前无法开始翻卡，请先结束其他操作");
-                return;
-            }
-
-            string s = flipNum.Text.Trim();
-            if (int.TryParse(s, out int num))
-            {
-                AutoFlip flip = new AutoFlip();
-                flip.flipStart(num);
-            }
-            else {
-                Common.addMessage(message, "翻卡次数请输入有效的整数");
-            }
         }
 
         private void stopFlip_Click(object sender, EventArgs e)
         {
             Common.addMessage(message, "敬请期待！");
             return;
-
-            _tokenSource?.Cancel();
-
-            _tokenSource = null;
-
-            Common.addMessage(message, "结束翻卡");
         }
 
         private async void unknownBox_Click(object sender, EventArgs e)
         {
-            _autoUnknown.run();
+            await Task.Run(() =>
+            {
+                _autoUnknown.run();
+            });
         }
 
         private void stopUnknownBox_Click(object sender, EventArgs e)
@@ -118,12 +105,6 @@ namespace CultivationHouseTools
 
             Common.addMessage(message, "敬请期待！");
             return;
-
-            _unknownTokenSource?.Cancel();
-
-            _unknownTokenSource = null;
-
-            Common.addMessage(message, "结束盲盒");
         }
 
         private void dailySet_Click(object sender, EventArgs e)
