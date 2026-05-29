@@ -217,6 +217,7 @@ namespace CultivationHouseTools.actions
         {
             if (DailySet.luckyCount == "是" || DailySet.happyBag == "是")
             {
+                Common.changeTab(mainWindow, "兑换", 0);
                 Common.changeTab(mainWindow, "仙币兑换", 1);
                 for (int i = 0; i < 10; i++)
                 {
@@ -243,6 +244,7 @@ namespace CultivationHouseTools.actions
             // 周一：3W仙币兑换200幸运点
             if (DateTime.Now.DayOfWeek == DayOfWeek.Monday && DailySet.monday)
             {
+                Common.changeTab(mainWindow, "兑换", 0);
                 Common.changeTab(mainWindow, "每日兑换", 1);
                 Common.clickButton(mainWindow, "周一：3W仙币兑换200幸运点");
                 Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},兑换周一每日兑换");
@@ -251,6 +253,7 @@ namespace CultivationHouseTools.actions
             // 周二：3W仙币兑换100福袋
             if (DateTime.Now.DayOfWeek == DayOfWeek.Tuesday && DailySet.tuesday)
             {
+                Common.changeTab(mainWindow, "兑换", 0);
                 Common.changeTab(mainWindow, "每日兑换", 1);
                 Common.clickButton(mainWindow, "周二：3W仙币兑换100福袋");
                 Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},兑换周二每日兑换");
@@ -259,6 +262,7 @@ namespace CultivationHouseTools.actions
             // 周三：3W仙币兑换1000修为
             if (DateTime.Now.DayOfWeek == DayOfWeek.Wednesday && DailySet.wednesday)
             {
+                Common.changeTab(mainWindow, "兑换", 0);
                 Common.changeTab(mainWindow, "每日兑换", 1);
                 Common.clickButton(mainWindow, "周三：3W仙币兑换1000修为");
                 Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},兑换周三每日兑换");
@@ -267,6 +271,7 @@ namespace CultivationHouseTools.actions
             // 周四：3W仙币兑换1个随机灵宝碎片
             if (DateTime.Now.DayOfWeek == DayOfWeek.Thursday && DailySet.thursday)
             {
+                Common.changeTab(mainWindow, "兑换", 0);
                 Common.changeTab(mainWindow, "每日兑换", 1);
                 Common.clickButton(mainWindow, "周四：3W仙币兑换1个随机灵宝碎片");
                 Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},兑换周四每日兑换");
@@ -275,8 +280,9 @@ namespace CultivationHouseTools.actions
             // 周五：3W仙币兑换兑20宝箱积分
             if (DateTime.Now.DayOfWeek == DayOfWeek.Friday && DailySet.friday)
             {
+                Common.changeTab(mainWindow, "兑换", 0);
                 Common.changeTab(mainWindow, "每日兑换", 1);
-                Common.clickButton(mainWindow, "周五：3W仙币兑换20宝箱积分");
+                Common.clickButton(mainWindow, "周五：3W仙币兑换兑20宝箱积分");
                 Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},兑换周五每日兑换");
                 Thread.Sleep(new Random().Next(500, 1000));
             }

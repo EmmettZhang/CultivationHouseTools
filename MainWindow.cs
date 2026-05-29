@@ -21,9 +21,6 @@ namespace CultivationHouseTools
 {
     public partial class MainWindow : Form
     {
-        private CancellationTokenSource _tokenSource;
-        private CancellationTokenSource _unknownTokenSource;
-
         private AutoEight _autoSignIn;
         private AutoHarvest _autoHarvest;
         private AutoSixteen _autoBoss;
@@ -82,8 +79,21 @@ namespace CultivationHouseTools
 
         private void flip_Click(object sender, EventArgs e)
         {
-            Common.addMessage(message, "敬请期待！");
-            return;
+            AutomationElement window = Common.getWindow("心愿盲盒");
+            AutomationElementCollection automationElementCollection = window.FindAll(
+                    TreeScope.Descendants,
+                    new PropertyCondition(AutomationElement.ClassNameProperty,"ScrollViewer"));
+
+            AutomationElementCollection automationElementCollection1 = automationElementCollection[0].FindAll(TreeScope.Descendants,
+                new PropertyCondition(AutomationElement.ClassNameProperty, "Label"));
+
+            foreach (AutomationElement item in automationElementCollection1)
+            {
+                Common.addMessage(message, $"{item.Current.Name}");
+            }
+
+            //Common.addMessage(message, "敬请期待！");
+            //return;
         }
 
         private void stopFlip_Click(object sender, EventArgs e)
@@ -103,8 +113,7 @@ namespace CultivationHouseTools
         private void stopUnknownBox_Click(object sender, EventArgs e)
         {
 
-            Common.addMessage(message, "敬请期待！");
-            return;
+            _autoUnknown.stop("结束开盲盒");
         }
 
         private void dailySet_Click(object sender, EventArgs e)

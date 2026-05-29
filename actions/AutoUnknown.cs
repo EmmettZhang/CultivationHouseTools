@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CultivationHouseTools.lib;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Input;
-using CultivationHouseTools.lib;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace CultivationHouseTools.actions
 {
@@ -17,13 +18,19 @@ namespace CultivationHouseTools.actions
     internal class AutoUnknown
     {
         private MainWindow _form;
-        private CancellationTokenSource _shopTokenSource;
+        private CancellationTokenSource _tokenSource;
         private int _cursor = 0;
         private Random _rnd = new Random();
         private List<int> _order;
         private int timeoutMs = 10000;
         private int interval = 100;
         private int elapsed = 0;
+        private string _unknownIndex;
+        private int _index;
+        private string _front;
+
+        private int _switchCount = 0;
+        private const int MaxSwitchCount = 5;
 
         public AutoUnknown(MainWindow form)
         {
@@ -34,106 +41,10 @@ namespace CultivationHouseTools.actions
         static extern bool SetCursorPos(int X, int Y);
 
         public async void run()
-        //{
-        //    if (_shopTokenSource != null)
-        //    {
-        //        Common.addMessage(_form.message, "当前无法开始购物，请先结束购物");
-        //        return;
-        //    }
-
-        //    AutomationElement exit = Common.getWindow("幸运商店");
-        //    if (exit != null)
-        //    {
-        //        // 关闭幸运商店窗口，以备重新打开重置状态
-        //        Common.clickButtonById(exit, "Close");
-        //        Thread.Sleep(1000);
-        //    }
-
-        //    string s = _form.shopNum.Text.Trim();
-        //    if (int.TryParse(s, out int num))
-        //    {
-        //        AutomationElement mainWindow = Common.getWindow(_form.title.Text.Trim());
-        //        if (mainWindow != null)
-        //        {
-        //            // 打开幸运商店弹窗
-        //            Common.clickButton(mainWindow, "幸运商店");
-        //            Thread.Sleep(1000); // 等待弹窗打开
-
-        //            AutomationElement shopWindow = Common.getWindow("幸运商店");
-
-        //            Common.clickButtonById(shopWindow, "ShuaXinButton");
-
-        //            AutomationElement noCount = Common.getElById(shopWindow, "TiShiLabel");
-        //            if (noCount != null && noCount.Current.Name == "你的幸运点不足")
-        //            {
-        //                Common.addMessage(_form.message, "你的幸运点不足, 停止");
-        //                return;
-        //            }
-
-        //            // 领取后自动刷新
-        //            AutomationElement box = Common.getElById(shopWindow, "ziDongShuaXin_Name");
-        //            TogglePattern toggle = box.GetCurrentPattern(TogglePattern.Pattern) as TogglePattern;
-        //            bool isChecked = toggle.Current.ToggleState == ToggleState.On;
-        //            if (toggle.Current.ToggleState != ToggleState.On)
-        //            {
-        //                toggle.Toggle();
-        //            }
-
-        //            _shopTokenSource = new CancellationTokenSource();
-        //            int count = 0;
-
-        //            await Task.Run(() =>
-        //            {
-        //                while (_shopTokenSource != null && !_shopTokenSource.Token.IsCancellationRequested)
-        //                {
-        //                    Common.addMessage(_form.message, $"{DateTime.Now.ToString()}，第{count + 1}次执行自动化");
-
-        //                    if (count == num - 1)
-        //                    {
-        //                        toggle.Toggle();
-        //                    }
-        //                    refreshStart();
-        //                    Thread.Sleep(1000);
-        //                    count++;
-        //                    if (count >= num)
-        //                    {
-        //                        _shopTokenSource?.Cancel();
-        //                        _shopTokenSource = null;
-        //                        Common.addMessage(_form.message, $"已完成{num}次购物, 停止");
-        //                    }
-
-        //                    noCount = Common.getElById(shopWindow, "TiShiLabel");
-        //                    if (noCount != null && noCount.Current.Name == "你的幸运点不足")
-        //                    {
-        //                        _shopTokenSource?.Cancel();
-        //                        _shopTokenSource = null;
-
-        //                        Common.addMessage(_form.message, "你的幸运点不足, 停止");
-        //                    }
-        //                }
-        //            },
-        //            _shopTokenSource.Token
-        //            );
-        //        }
-        //        else
-        //        {
-        //            Common.addMessage(_form.message, "未找到修仙小屋窗口，请确保游戏正在运行并且窗口标题正确");
-        //        }
-        //    }
-        //    else
-        //    {
-        //        Common.addMessage(_form.message, "购物次数请输入有效的整数");
-        //    }
-        //}
-
-
-        //public void autoOpenUnknown()
         {
-            string unknownIndex = _form.unknownIndex.Text.Trim();
-            // 如果不是1-10则报异常
-            if (unknownIndex == null)
+            if (_tokenSource != null)
             {
-                Common.addMessage(_form.message, "请输入盲盒序号");
+                Common.addMessage(_form.message, "当前无法开始盲盒，请先结束盲盒");
                 return;
             }
 
@@ -165,89 +76,158 @@ namespace CultivationHouseTools.actions
                 return;
             }
 
-            Common.clickButton(window, "最大化");
-            int index = 0;
-            switch (_form.unknownIndex.Text.Trim())
+            _unknownIndex = _form.unknownIndex.Text.Trim();
+
+            //Common.clickButton(window, "最大化");
+            getUnknownIndex(window);
+            if (_front == "ERROR")
             {
-                case "1":
-                    Common.clickButton(window, "切换盲盒1");
-                    index = 0;
-                    break;
-                case "2":
-                    Common.clickButton(window, "切换盲盒2");
-                    index = 1;
-                    break;
-                case "3":
-                    Common.clickButton(window, "切换盲盒3");
-                    index = 2;
-                    break;
-                case "4":
-                    Common.clickButton(window, "切换盲盒4");
-                    index = 3;
-                    break;
-                case "5":
-                    Common.clickButton(window, "切换盲盒5");
-                    index = 4;
-                    break;
-                case "6":
-                    Common.clickButton(window, "切换盲盒6");
-                    index = 5;
-                    break;
-                case "7":
-                    Common.clickButton(window, "切换盲盒7");
-                    index = 6;
-                    break;
-                case "8":
-                    Common.clickButton(window, "切换盲盒8");
-                    index = 7;
-                    break;
-                case "9":
-                    Common.clickButton(window, "切换盲盒9");
-                    index = 8;
-                    break;
-                case "10":
-                    Common.clickButton(window, "切换盲盒10");
-                    index = 9;
-                    break;
-                default:
-                    Common.addMessage(_form.message, "请输入有效盲盒序号");
-                    return;
+                Common.addMessage(_form.message, "请输入有效盲盒序号");
+                return;
             }
 
-            var scrollViewer = window.FindAll(
+            AutomationElementCollection automationElementCollection = window.FindAll(
                     TreeScope.Descendants,
                     new PropertyCondition(
                         AutomationElement.ClassNameProperty,
-                        "ScrollViewer"))[index];
+                        "ScrollViewer"));
 
-            _order = Enumerable.Range(1, 400).OrderBy(x => _rnd.Next()).ToList();
-            _cursor = 0;
+            AutomationElement scrollViewer = automationElementCollection[_index];
 
-            string s = _form.unknownNum.Text.Trim();
+            string s = _form.shopNum.Text.Trim();
             if (int.TryParse(s, out int num))
             {
-                for (int i = 0; i < num; i++)
+                _tokenSource = new CancellationTokenSource();
+                int count = 0;
+                AutomationElement noCount = null;
+
+                await Task.Run(() =>
                 {
+                    while (_tokenSource != null && !_tokenSource.Token.IsCancellationRequested)
+                    {
 
-                    TryGetNext(out int key);
+                        autoOpenUnknown(scrollViewer);
+                        noCount = Common.getElById(window, "TiShiLabel");
+                        if (noCount != null)
+                        {
 
-                    Point p = ClickCell(scrollViewer, key);
+                            if (noCount.Current.Name.IndexOf("剩：0") > 0)
+                            {
+                                stop("你的钥匙不足, 停止");
+                            }
+                            else if (noCount != null && noCount.Current.Name.IndexOf("该盲盒剩特殊物品：0") > 0)
+                            {
+                                // 没有特殊物品，切换盲盒，1-5均无特殊物品后停止
+                                moveToNextBox(window);
+                            }
+                            else if (noCount.Current.Name.IndexOf("你没有钥匙") > 0)
+                            {
+                                stop("你的钥匙不足, 停止");
+                            }
+                        }
 
-                    SetCursorPos((int)p.X, (int)p.Y);
+                        count++;
 
-                    Thread.Sleep(750);
+                        if (count % 84 == 0)
+                        {
+                            Common.clickButton(window, "刷新当前盲盒数据");
+                            noCount = Common.getElById(window, "TiShiLabel");
+                            // 检查是否还有特殊物品
+                            if (noCount != null && noCount.Current.Name.IndexOf("该盲盒剩余特殊物品：0") > 0)
+                            {
+                                // 没有特殊物品，切换盲盒
+                                moveToNextBox(window);
+                            }
+                            // 排除已开位置
+                        }
 
-                    WinApi.LeftClick();
 
-                    Common.addMessage(_form.message, $"点击第{key}个位置，X:{p.X},Y:{p.Y}");
-                }
+                        if (count >= num)
+                        {
+                            stop($"已完成{num}次盲盒, 停止");
+                        }
+                    }
+                },
+                _tokenSource.Token
+                );
             }
             else
             {
                 Common.addMessage(_form.message, "盲盒次数请输入有效的整数");
             }
+        }
 
-            //你没有钥匙，无法开启盲盒
+        public void stop(string msg)
+        {
+            _tokenSource?.Cancel();
+            _tokenSource = null;
+            Common.addMessage(_form.message, msg);
+        }
+
+        private void moveToNextBox(AutomationElement window)
+        {
+            int.TryParse(_unknownIndex, out int unknownIndex);
+            int nextUnknownIndex = GetNextBox(unknownIndex);
+
+            _unknownIndex = nextUnknownIndex.ToString();
+            getUnknownIndex(window);
+
+            _switchCount++;
+
+            if (_switchCount >= MaxSwitchCount)
+            {
+                string mes = nextUnknownIndex >= 1 && nextUnknownIndex <= 5 ? "1-5" : "6-10";
+                stop($"盲盒{mes}均已没有特殊物品，停止");
+            }
+        }
+
+        private int GetNextBox(int current)
+        {
+            var group = GetGroup(current);
+
+            int next = current + 1;
+
+            if (next > group.End)
+                next = group.Start;
+
+            return next;
+        }
+
+        private (int Start, int End) GetGroup(int boxNum)
+        {
+            if (boxNum <= 5)
+                return (1, 5);
+
+            return (6, 10);
+        }
+
+
+        public void autoOpenUnknown(AutomationElement scrollViewer)
+        {
+            TryGetNext(out int key);
+
+            Point p = ClickCell(scrollViewer, key);
+
+            SetCursorPos((int)p.X, (int)p.Y);
+
+            Thread.Sleep(720);
+
+            WinApi.LeftClick();
+
+            Common.addMessage(_form.message, $"{DateTime.Now.ToString()}，点击盲盒{_unknownIndex}第{key}个位置，X:{p.X},Y:{p.Y}");
+        }
+
+        public List<int> shuffle()
+        {
+            List<int> list = Enumerable.Range(1, 400).ToList();
+
+            for (int i = list.Count - 1; i > 0; i--)
+            {
+                int j = _rnd.Next(i + 1);
+                (list[i], list[j]) = (list[j], list[i]);
+            }
+
+            return list;
         }
 
         public bool TryGetNext(out int value)
@@ -256,7 +236,7 @@ namespace CultivationHouseTools.actions
             {
                 int v = _order[_cursor++];
 
-                if (UnknownLib.clickedSet.Add(getUnknownIndex() + v))
+                if (UnknownLib.clickedSet.Add(_front + v))
                 {
                     value = v;
                     return true;
@@ -267,32 +247,76 @@ namespace CultivationHouseTools.actions
             return false;
         }
 
-        private string getUnknownIndex()
+        private bool getUnknownIndex(AutomationElement window)
         {
-            switch (_form.unknownIndex.Text.Trim())
+            _order = shuffle();
+            _cursor = 0;
+            switch (_unknownIndex)
             {
                 case "1":
-                    return "A";
-                case "2": 
-                    return "B";
+                    Common.clickButton(window, "切换盲盒1");
+                    Common.addMessage(_form.message, "切换盲盒1");
+                    _front = "A";
+                    _index = 0;
+                    return true;
+                case "2":
+                    Common.clickButton(window, "切换盲盒2");
+                    Common.addMessage(_form.message, "切换盲盒2"); 
+                    _front = "B";
+                    _index = 1;
+                    return true;
                 case "3":
-                    return "C";
+                    Common.clickButton(window, "切换盲盒3");
+                    Common.addMessage(_form.message, "切换盲盒3");
+                    _front = "C";
+                    _index = 2;
+                    return true;
                 case "4":
-                    return "D";
+                    Common.clickButton(window, "切换盲盒4");
+                    Common.addMessage(_form.message, "切换盲盒4");
+                    _front = "D";
+                    _index = 3;
+                    return true;
                 case "5":
-                    return "E";
+                    Common.clickButton(window, "切换盲盒5");
+                    Common.addMessage(_form.message, "切换盲盒5");
+                    _front = "E";
+                    _index = 4;
+                    return true;
                 case "6":
-                    return "F";
+                    Common.clickButton(window, "切换盲盒6");
+                    Common.addMessage(_form.message, "切换盲盒6");
+                    _front = "F";
+                    _index = 5;
+                    return true;
                 case "7":
-                    return "G";
+                    Common.clickButton(window, "切换盲盒7");
+                    Common.addMessage(_form.message, "切换盲盒7");
+                    _front = "G";
+                    _index = 6;
+                    return true;
                 case "8":
-                    return "H";
+                    Common.clickButton(window, "切换盲盒8");
+                    Common.addMessage(_form.message, "切换盲盒8");
+                    _front = "H";
+                    _index = 7;
+                    return true;
                 case "9":
-                    return "I";
+                    Common.clickButton(window, "切换盲盒9");
+                    Common.addMessage(_form.message, "切换盲盒9");
+                    _front = "I";
+                    _index = 8;
+                    return true;
                 case "10":
-                    return "J";
+                    Common.clickButton(window, "切换盲盒10");
+                    Common.addMessage(_form.message, "切换盲盒10");
+                    _front = "J";
+                    _index = 9;
+                    return true;
                 default:
-                    return null;
+                    _front = "ERROR";
+                    _index = -1;
+                    return false;
             }
         }
 
