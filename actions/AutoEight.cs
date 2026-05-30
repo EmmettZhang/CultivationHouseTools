@@ -14,6 +14,9 @@ namespace CultivationHouseTools.actions
     {
         private CancellationTokenSource _cts = null;
         private Task _task;
+        private int timeoutMs = 10000;
+        private int interval = 100;
+        private int elapsed = 0;
 
         private MainWindow _form;
         private static List<TimeSpan> times = new List<TimeSpan>() { new TimeSpan(7, 55, 0) };
@@ -86,38 +89,48 @@ namespace CultivationHouseTools.actions
          */
         public void DoWork()
         {
-            AutomationElement mainWindow = Common.getWindow(_form.title.Text.Trim());
-            if (mainWindow != null)
+            AutomationElement mainWindow = null;
+            elapsed = 0;
+            while (elapsed < timeoutMs)
             {
-                // 签到弹窗
-                signIn(mainWindow);
+                mainWindow = Common.getWindow(_form.title.Text.Trim());
 
-                // 葫芦
-                hulu(mainWindow);
+                if (mainWindow != null)
+                    break;
 
-                // 门派演武
-                sectArena(mainWindow);
-
-                // 报名Boss
-                signUpBoss(mainWindow);
-
-                // 购买金币精力和金币福袋
-                buyGoldExchange(mainWindow);
-
-                // 购买仙币兑换
-                buyXianBiExchange(mainWindow);
-
-                // 购买每日兑换
-                dailyExchange(mainWindow);
-
-                // 发红包福包
-                sendRedBag(mainWindow);
-
+                Thread.Sleep(interval);
+                elapsed += interval;
             }
-            else
+
+            if (mainWindow == null)
             {
-                Common.addMessage(_form.dailyMessage, "未找到修仙小屋窗口，请确保游戏正在运行并且窗口标题正确");
+                Common.addMessage(_form.message, "未找到修仙小屋窗口，请确保游戏正在运行并且窗口标题正确");
+                return;
             }
+
+            // 签到弹窗
+            signIn(mainWindow);
+
+            // 葫芦
+            hulu(mainWindow);
+
+            // 门派演武
+            sectArena(mainWindow);
+
+            // 报名Boss
+            signUpBoss(mainWindow);
+
+            // 购买金币精力和金币福袋
+            buyGoldExchange(mainWindow);
+
+            // 购买仙币兑换
+            buyXianBiExchange(mainWindow);
+
+            // 购买每日兑换
+            dailyExchange(mainWindow);
+
+            // 发红包福包
+            sendRedBag(mainWindow);
         }
 
         // 签到
@@ -125,42 +138,82 @@ namespace CultivationHouseTools.actions
         {
             // 签到弹窗
             Common.clickButton(mainWindow, "签到");
-            Thread.Sleep(new Random().Next(500, 1000));
-            AutomationElement signWindow = Common.getWindow("签到");
-            Common.clickButton(signWindow, "点击签到");
-            Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},签到");
-            // 1-3秒随机偏移
-            Thread.Sleep(new Random().Next(1000, 3000));
-            Common.clickButton(signWindow, "每日签到福利");
-            Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},领取每日签到福利");
-            Common.clickButtonById(signWindow, "Close");
-            Thread.Sleep(new Random().Next(500, 1000));
+            AutomationElement signWindow = null;
+            elapsed = 0;
+            while (elapsed < timeoutMs)
+            {
+                signWindow = Common.getWindow("签到");
+
+                if (signWindow != null)
+                    break;
+
+                Thread.Sleep(interval);
+                elapsed += interval;
+            }
+
+            if (signWindow != null)
+            {
+                Common.clickButton(signWindow, "点击签到");
+                Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},签到");
+                // 1-3秒随机偏移
+                Thread.Sleep(new Random().Next(1000, 3000));
+                Common.clickButton(signWindow, "每日签到福利");
+                Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},领取每日签到福利");
+                Common.clickButtonById(signWindow, "Close");
+                Thread.Sleep(new Random().Next(500, 1000));
+            }
         }
 
         // 葫芦
         public void hulu(AutomationElement mainWindow)
         {
             Common.clickButton(mainWindow, "仙玉商店");
-            Thread.Sleep(new Random().Next(500, 1000));
-            AutomationElement jadeWindow = Common.getWindow("仙玉商店");
-            Common.clickButton(jadeWindow, "宝葫芦玩法");
-            Thread.Sleep(new Random().Next(500, 1000));
-            AutomationElement huluWindow = Common.getWindow("宝葫芦");
-            Common.clickButton(huluWindow, "每日签到");
-            Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},宝葫芦签到");
-            Thread.Sleep(new Random().Next(1000, 2000));
-            // 如果是周一
-            if (DateTime.Now.DayOfWeek == DayOfWeek.Monday)
+            AutomationElement jadeWindow = null;
+            elapsed = 0;
+            while (elapsed < timeoutMs)
             {
-                Common.clickButton(huluWindow, "收获葫芦");
-                Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},收获宝葫芦");
-                Thread.Sleep(new Random().Next(1000, 2000));
+                jadeWindow = Common.getWindow("仙玉商店");
+
+                if (jadeWindow != null)
+                    break;
+
+                Thread.Sleep(interval);
+                elapsed += interval;
             }
-            Common.clickButton(huluWindow, "播撒全部灵露");
-            Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},播撒宝葫芦灵露");
-            Common.clickButtonById(huluWindow, "Close");
-            Common.clickButtonById(jadeWindow, "Close");
-            Thread.Sleep(new Random().Next(500, 1000));
+            if (jadeWindow != null)
+            {
+                Common.clickButton(jadeWindow, "宝葫芦玩法");
+                AutomationElement huluWindow = null;
+                elapsed = 0;
+                while (elapsed < timeoutMs)
+                {
+                    huluWindow = Common.getWindow("宝葫芦");
+
+                    if (huluWindow != null)
+                        break;
+
+                    Thread.Sleep(interval);
+                    elapsed += interval;
+                }
+                if (huluWindow != null)
+                {
+                    Common.clickButton(huluWindow, "每日签到");
+                    Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},宝葫芦签到");
+                    Thread.Sleep(new Random().Next(1000, 2000));
+                    // 如果是周一
+                    if (DateTime.Now.DayOfWeek == DayOfWeek.Monday)
+                    {
+                        Common.clickButton(huluWindow, "收获葫芦");
+                        Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},收获宝葫芦");
+                        Thread.Sleep(new Random().Next(1000, 2000));
+                    }
+                    Common.clickButton(huluWindow, "播撒全部灵露");
+                    Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},播撒宝葫芦灵露");
+                    Common.clickButtonById(huluWindow, "Close");
+                    Common.clickButtonById(jadeWindow, "Close");
+                    Thread.Sleep(new Random().Next(500, 1000));
+                }
+            }
         }
 
         // 门派演武
@@ -291,12 +344,22 @@ namespace CultivationHouseTools.actions
         // 发红包福包
         public void sendRedBag(AutomationElement mainWindow)
         {
-            if (mainWindow != null)
+            Common.changeTab(mainWindow, "设置", 0);
+            Common.clickButton(mainWindow, "发红包/福包");
+            AutomationElement refBag = null;
+            elapsed = 0;
+            while (elapsed < timeoutMs)
             {
-                Common.changeTab(mainWindow, "设置", 0);
-                Common.clickButton(mainWindow, "发红包/福包");
-                Thread.Sleep(new Random().Next(500, 1000));
-                AutomationElement refBag = Common.getWindow("发红包 / 福包");
+                refBag = Common.getWindow("发红包 / 福包");
+
+                if (refBag != null)
+                    break;
+
+                Thread.Sleep(interval);
+                elapsed += interval;
+            }
+            if (refBag != null)
+            {
                 Common.clickButton(refBag, "自动发放所有红包");
                 Thread.Sleep(new Random().Next(500, 1000));
                 Common.clickButton(refBag, "自动发放所有福包");

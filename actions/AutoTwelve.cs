@@ -14,9 +14,12 @@ namespace CultivationHouseTools.actions
         private CancellationTokenSource _cts;
         private Task _task;
         private Random _random = new Random();
+        private int timeoutMs = 10000;
+        private int interval = 100;
+        private int elapsed = 0;
 
         private MainWindow _form;
-        private static List<TimeSpan> times = new List<TimeSpan>() { new TimeSpan(12, 0, 5) };
+        private static List<TimeSpan> times = new List<TimeSpan>() { new TimeSpan(12, 0, 0) };
 
         public AutoTwelve(MainWindow form)
         {
@@ -85,41 +88,60 @@ namespace CultivationHouseTools.actions
          */
         public void DoWork()
         {
-            AutomationElement mainWindow = Common.getWindow(_form.title.Text.Trim());
-            if (mainWindow != null)
+            AutomationElement mainWindow = null;
+            elapsed = 0;
+            while (elapsed < timeoutMs)
             {
-                // 自动获取boss结果
-                Common.changeTab(mainWindow, "BOSS", 0);
-                Common.clickButton(mainWindow, "真·BOSS烛龙");
+                mainWindow = Common.getWindow(_form.title.Text.Trim());
 
-                AutomationElement bossWindow = Common.getWindow("真·世界BOSS");
-                // 1-3秒随机偏移
-                Thread.Sleep(new Random().Next(1000, 3000));
+                if (mainWindow != null)
+                    break;
 
-                if (bossWindow != null) {
-                    if (DailySet.attackMethod == "物攻")
-                    {
-                        Common.clickButton(bossWindow, "3秒自动物理攻击");
-                        Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},真BOSS自动物理攻击");
-                    }
-                    else if (DailySet.attackMethod == "道攻")
-                    {
-                        Common.clickButton(bossWindow, "3秒自动道术攻击");
-                        Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},真BOSS自动道术攻击");
-                    }
+                Thread.Sleep(interval);
+                elapsed += interval;
+            }
 
-                    // 等待十分钟，确保能打完，加5-10秒随机偏移，避免每次都在同一时间点点击抽奖
-                    Thread.Sleep((10 * 60 * 1000) + new Random().Next(5000, 10000));
-                    Common.clickButton(bossWindow, "抽取奖励");
-                    Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},抽取真BOSS奖励");
-                    Common.clickButtonById(bossWindow, "Close");
+            if (mainWindow == null)
+            {
+                Common.addMessage(_form.message, "未找到修仙小屋窗口，请确保游戏正在运行并且窗口标题正确");
+                return;
+            }
+
+            Common.changeTab(mainWindow, "BOSS", 0);
+            Common.clickButton(mainWindow, "真·BOSS烛龙");
+
+            AutomationElement bossWindow = null;
+            elapsed = 0;
+            while (elapsed < timeoutMs)
+            {
+                bossWindow = Common.getWindow("真·世界BOSS");
+
+                if (bossWindow != null)
+                    break;
+
+                Thread.Sleep(interval);
+                elapsed += interval;
+            }
+
+            if (bossWindow != null)
+            {
+                if (DailySet.attackMethod == "物攻")
+                {
+                    Common.clickButton(bossWindow, "3秒自动物理攻击");
+                    Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},真BOSS自动物理攻击");
                 }
-            }
-            else
-            {
-                Common.addMessage(_form.dailyMessage, "未找到修仙小屋窗口，请确保游戏正在运行并且窗口标题正确");
-            }
+                else if (DailySet.attackMethod == "道攻")
+                {
+                    Common.clickButton(bossWindow, "3秒自动道术攻击");
+                    Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},真BOSS自动道术攻击");
+                }
 
+                // 等待十分钟，确保能打完，加5-10秒随机偏移，避免每次都在同一时间点点击抽奖
+                Thread.Sleep((10 * 60 * 1000) + new Random().Next(5000, 10000));
+                Common.clickButton(bossWindow, "抽取奖励");
+                Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},抽取真BOSS奖励");
+                Common.clickButtonById(bossWindow, "Close");
+            }
         }
 
         public void stop()

@@ -13,6 +13,9 @@ namespace CultivationHouseTools.actions
         private CancellationTokenSource _cts;
         private Task _task;
         private Random _random = new Random();
+        private int timeoutMs = 10000;
+        private int interval = 100;
+        private int elapsed = 0;
 
         private MainWindow _form;
         private static List<TimeSpan> times = new List<TimeSpan>() { new TimeSpan(15, 55, 0) };
@@ -84,33 +87,44 @@ namespace CultivationHouseTools.actions
          */
         public void DoWork()
         {
-            AutomationElement mainWindow = Common.getWindow(_form.title.Text.Trim());
-            if (mainWindow != null)
+            AutomationElement mainWindow = null;
+            elapsed = 0;
+            while (elapsed < timeoutMs)
             {
-                // 自动获取boss结果
-                Common.changeTab(mainWindow, "BOSS", 0);
-                Common.clickButton(mainWindow, "获 取 结 果");
-                Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},获取每日BOSS结果");
+                mainWindow = Common.getWindow(_form.title.Text.Trim());
+
+                if (mainWindow != null)
+                    break;
+
+                Thread.Sleep(interval);
+                elapsed += interval;
+            }
+
+            if (mainWindow == null)
+            {
+                Common.addMessage(_form.message, "未找到修仙小屋窗口，请确保游戏正在运行并且窗口标题正确");
+                return;
+            }
+
+            // 自动获取boss结果
+            Common.changeTab(mainWindow, "BOSS", 0);
+            Common.clickButton(mainWindow, "获 取 结 果");
+            Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},获取每日BOSS结果");
+            // 1-3秒随机偏移
+            Thread.Sleep(new Random().Next(1000, 3000));
+
+            // 如果是周五，自动获取门派分成
+            if (DateTime.Now.DayOfWeek == DayOfWeek.Friday)
+            {
+                Common.changeTab(mainWindow, "门派", 0);
+                Common.changeTab(mainWindow, "分 成", 1);
+                Common.clickButton(mainWindow, "查看本周分成");
                 // 1-3秒随机偏移
                 Thread.Sleep(new Random().Next(1000, 3000));
+                Common.clickButton(mainWindow, "领取我的本周分成");
+                Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},获取门派每周分成");
+            }
 
-                // 如果是周五，自动获取门派分成
-                if (DateTime.Now.DayOfWeek == DayOfWeek.Friday)
-                {
-                    Common.changeTab(mainWindow, "门派", 0);
-                    Common.changeTab(mainWindow, "分 成", 1);
-                    Common.clickButton(mainWindow, "查看本周分成");
-                    // 1-3秒随机偏移
-                    Thread.Sleep(new Random().Next(1000, 3000));
-                    Common.clickButton(mainWindow, "领取我的本周分成");
-                    Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},获取门派每周分成");
-                }
-            }
-            else
-            {
-                Common.addMessage(_form.dailyMessage, "未找到修仙小屋窗口，请确保游戏正在运行并且窗口标题正确");
-            }
-            
         }
 
         public void stop()
