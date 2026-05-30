@@ -48,90 +48,102 @@ namespace CultivationHouseTools
             string s = _form.shopNum.Text.Trim();
             if (int.TryParse(s, out int num))
             {
-                AutomationElement mainWindow = Common.getWindow(_form.title.Text.Trim());
-                if (mainWindow != null)
+                AutomationElement mainWindow = null;
+                elapsed = 0;
+                while (elapsed < timeoutMs)
                 {
-                    // 打开幸运商店弹窗
-                    Common.clickButton(mainWindow, "幸运商店");
+                    mainWindow = Common.getWindow(_form.title.Text.Trim());
 
-                    AutomationElement shopWindow = null;
-                    while (elapsed < timeoutMs)
-                    {
-                        shopWindow = Common.getWindow("幸运商店");
+                    if (mainWindow != null)
+                        break;
 
-                        if (shopWindow != null)
-                            break;
-
-                        Thread.Sleep(interval);
-                        elapsed += interval;
-                    }
-
-
-                    if (shopWindow == null)
-                    {
-                        Common.addMessage(_form.message, "窗口未启动");
-                        return;
-                    }
-
-
-                    Common.clickButtonById(shopWindow, "ShuaXinButton");
-
-                    AutomationElement noCount = Common.getElById(shopWindow, "TiShiLabel");
-                    if (noCount != null && noCount.Current.Name == "你的幸运点不足")
-                    {
-                        Common.addMessage(_form.message, "你的幸运点不足, 停止");
-                        return;
-                    }
-
-                    // 领取后自动刷新
-                    AutomationElement box = Common.getElById(shopWindow, "ziDongShuaXin_Name");
-                    TogglePattern toggle = box.GetCurrentPattern(TogglePattern.Pattern) as TogglePattern;
-                    bool isChecked = toggle.Current.ToggleState == ToggleState.On;
-                    if (toggle.Current.ToggleState != ToggleState.On)
-                    {
-                        toggle.Toggle();
-                    }
-
-                    _shopTokenSource = new CancellationTokenSource();
-                    int count = 0;
-
-                    await Task.Run(() =>
-                    {
-                        while (_shopTokenSource != null && !_shopTokenSource.Token.IsCancellationRequested)
-                        {
-                            Common.addMessage(_form.message, $"{DateTime.Now.ToString()}，第{count + 1}次执行自动化");
-
-                            if (count == num - 1)
-                            {
-                                toggle.Toggle();
-                            }
-                            refreshStart();
-                            Thread.Sleep(1000);
-                            count++;
-                            if (count >= num)
-                            {
-                                _shopTokenSource?.Cancel();
-                                _shopTokenSource = null;
-                                Common.addMessage(_form.message, $"已完成{num}次购物, 停止");
-                            }
-
-                            noCount = Common.getElById(shopWindow, "TiShiLabel");
-                            if (noCount != null && noCount.Current.Name == "你的幸运点不足")
-                            {
-                                _shopTokenSource?.Cancel();
-                                _shopTokenSource = null;
-
-                                Common.addMessage(_form.message, "你的幸运点不足, 停止");
-                            }
-                        }
-                    },
-                    _shopTokenSource.Token
-                    );
+                    Thread.Sleep(interval);
+                    elapsed += interval;
                 }
-                else
+
+                if (mainWindow == null)
                 {
                     Common.addMessage(_form.message, "未找到修仙小屋窗口，请确保游戏正在运行并且窗口标题正确");
+                    return;
                 }
+
+                // 打开幸运商店弹窗
+                Common.clickButton(mainWindow, "幸运商店");
+
+                AutomationElement shopWindow = null;
+                elapsed = 0;
+                while (elapsed < timeoutMs)
+                {
+                    shopWindow = Common.getWindow("幸运商店");
+
+                    if (shopWindow != null)
+                        break;
+
+                    Thread.Sleep(interval);
+                    elapsed += interval;
+                }
+
+
+                if (shopWindow == null)
+                {
+                    Common.addMessage(_form.message, "窗口未启动");
+                    return;
+                }
+
+
+                Common.clickButtonById(shopWindow, "ShuaXinButton");
+
+                AutomationElement noCount = Common.getElById(shopWindow, "TiShiLabel");
+                if (noCount != null && noCount.Current.Name == "你的幸运点不足")
+                {
+                    Common.addMessage(_form.message, "你的幸运点不足, 停止");
+                    return;
+                }
+
+                // 领取后自动刷新
+                AutomationElement box = Common.getElById(shopWindow, "ziDongShuaXin_Name");
+                TogglePattern toggle = box.GetCurrentPattern(TogglePattern.Pattern) as TogglePattern;
+                bool isChecked = toggle.Current.ToggleState == ToggleState.On;
+                if (toggle.Current.ToggleState != ToggleState.On)
+                {
+                    toggle.Toggle();
+                }
+
+                _shopTokenSource = new CancellationTokenSource();
+                int count = 0;
+
+                await Task.Run(() =>
+                {
+                    while (_shopTokenSource != null && !_shopTokenSource.Token.IsCancellationRequested)
+                    {
+                        Common.addMessage(_form.message, $"{DateTime.Now.ToString()}，第{count + 1}次执行自动化");
+
+                        if (count == num - 1)
+                        {
+                            toggle.Toggle();
+                        }
+                        refreshStart();
+                        Thread.Sleep(1000);
+                        count++;
+                        if (count >= num)
+                        {
+                            _shopTokenSource?.Cancel();
+                            _shopTokenSource = null;
+                            Common.addMessage(_form.message, $"已完成{num}次购物, 停止");
+                        }
+
+                        noCount = Common.getElById(shopWindow, "TiShiLabel");
+                        if (noCount != null && noCount.Current.Name == "你的幸运点不足")
+                        {
+                            _shopTokenSource?.Cancel();
+                            _shopTokenSource = null;
+
+                            Common.addMessage(_form.message, "你的幸运点不足, 停止");
+                        }
+                    }
+                },
+                _shopTokenSource.Token
+                );
             }
             else
             {

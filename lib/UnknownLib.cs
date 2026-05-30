@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,16 +8,19 @@ namespace CultivationHouseTools.lib
 {
     public static class UnknownLib
     {
-        public static HashSet<string> clickedSet = new HashSet<string>();
+
+        public static Dictionary<int, List<int>> RemainMap = new Dictionary<int, List<int>>();
 
         private static CancellationTokenSource _cts;
         private static Task _task;
+        private static Random _rnd = new Random();
 
         private static List<TimeSpan> times = new List<TimeSpan>() { new TimeSpan(9, 29, 00), new TimeSpan(15, 29, 00), new TimeSpan(21, 29, 00) };
 
 
         public static void run()
         {
+            DoWork();
             _cts = new CancellationTokenSource();
 
             _task = Task.Run(() => RunSchedule(_cts.Token));
@@ -52,14 +54,35 @@ namespace CultivationHouseTools.lib
 
                 await Task.Delay(wait, token);
 
-                DoWork();
+                try
+                {
+                    DoWork();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
             }
+        }
+        public static List<int> shuffle()
+        {
+            List<int> list = Enumerable.Range(0, 400).ToList();
+
+            for (int i = list.Count - 1; i > 0; i--)
+            {
+                int j = _rnd.Next(i + 1);
+                (list[i], list[j]) = (list[j], list[i]);
+            }
+
+            return list;
         }
 
         public static void DoWork()
         {
-            clickedSet.Clear();
-
+            for (int i = 0; i <= 9; i++)
+            {
+                RemainMap[i] = shuffle();
+            }
         }
     }
 }

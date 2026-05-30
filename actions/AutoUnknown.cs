@@ -1,16 +1,12 @@
 ﻿using CultivationHouseTools.lib;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Input;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace CultivationHouseTools.actions
 {
@@ -19,15 +15,13 @@ namespace CultivationHouseTools.actions
     {
         private MainWindow _form;
         private CancellationTokenSource _tokenSource;
-        private int _cursor = 0;
-        private Random _rnd = new Random();
-        private List<int> _order;
         private int timeoutMs = 10000;
         private int interval = 100;
         private int elapsed = 0;
         private string _unknownIndex;
         private int _index;
         private string _front;
+        private static Random _rnd = new Random();
 
         private int _switchCount = 0;
         private const int MaxSwitchCount = 5;
@@ -42,6 +36,7 @@ namespace CultivationHouseTools.actions
 
         public async void run()
         {
+            Common.addMessage(_form.message, $"{DateTime.Now.ToString()}，开始执行");
             if (_tokenSource != null)
             {
                 Common.addMessage(_form.message, "当前无法开始盲盒，请先结束盲盒");
@@ -55,9 +50,27 @@ namespace CultivationHouseTools.actions
                 Common.clickButtonById(exit, "Close");
             }
 
-            AutomationElement mainWindow = Common.getWindow(_form.title.Text.Trim());
+            AutomationElement mainWindow = null;
+            elapsed = 0;
+            while (elapsed < timeoutMs)
+            {
+                mainWindow = Common.getWindow(_form.title.Text.Trim());
+
+                if (mainWindow != null)
+                    break;
+
+                Thread.Sleep(interval);
+                elapsed += interval;
+            }
+
+            if (mainWindow == null)
+            {
+                Common.addMessage(_form.message, "未找到修仙小屋窗口，请确保游戏正在运行并且窗口标题正确");
+                return;
+            }
             Common.clickButton(mainWindow, "心愿盲盒");
             AutomationElement window = null;
+            elapsed = 0;
             while (elapsed < timeoutMs)
             {
                 window = Common.getWindow("心愿盲盒");
@@ -94,57 +107,69 @@ namespace CultivationHouseTools.actions
 
             AutomationElement scrollViewer = automationElementCollection[_index];
 
-            string s = _form.shopNum.Text.Trim();
+            string s = _form.unknownNum.Text.Trim();
             if (int.TryParse(s, out int num))
             {
                 _tokenSource = new CancellationTokenSource();
                 int count = 0;
-                AutomationElement noCount = null;
+                AutomationElement noCount = Common.getElById(window, "TiShiLabel");
+                long currentTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
                 await Task.Run(() =>
                 {
                     while (_tokenSource != null && !_tokenSource.Token.IsCancellationRequested)
                     {
-
-                        autoOpenUnknown(scrollViewer);
-                        noCount = Common.getElById(window, "TiShiLabel");
+                        bool clicked = autoOpenUnknown(scrollViewer);
+                        if (!clicked) {
+                            stop("已无位置可开，停止");
+                            return;
+                        }
                         if (noCount != null)
                         {
-
                             if (noCount.Current.Name.IndexOf("剩：0") > 0)
                             {
                                 stop("你的钥匙不足, 停止");
+                                return;
                             }
-                            else if (noCount != null && noCount.Current.Name.IndexOf("该盲盒剩特殊物品：0") > 0)
+                            else if (noCount.Current.Name.IndexOf("该盲盒剩特殊物品：0") > 0)
                             {
                                 // 没有特殊物品，切换盲盒，1-5均无特殊物品后停止
                                 moveToNextBox(window);
+                                scrollViewer = automationElementCollection[_index];
                             }
-                            else if (noCount.Current.Name.IndexOf("你没有钥匙") > 0)
+                            else if (noCount.Current.Name == "你没有钥匙，无法开启盲盒（钥匙通过设置 - 发红包下面 - 发灵包获得）")
                             {
                                 stop("你的钥匙不足, 停止");
+                                return;
                             }
                         }
 
                         count++;
 
-                        if (count % 84 == 0)
+                        if (DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - currentTime >= 60000)
                         {
+                            currentTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                             Common.clickButton(window, "刷新当前盲盒数据");
-                            noCount = Common.getElById(window, "TiShiLabel");
+                            Thread.Sleep(1000);
                             // 检查是否还有特殊物品
-                            if (noCount != null && noCount.Current.Name.IndexOf("该盲盒剩余特殊物品：0") > 0)
+                            if (noCount.Current.Name.IndexOf("该盲盒剩余特殊物品：0") > 0)
                             {
                                 // 没有特殊物品，切换盲盒
                                 moveToNextBox(window);
+                                scrollViewer = automationElementCollection[_index];
                             }
-                            // 排除已开位置
+                            else
+                            {
+                                // 排除已开位置
+                                removeOpened(scrollViewer);
+                            }
                         }
 
 
                         if (count >= num)
                         {
                             stop($"已完成{num}次盲盒, 停止");
+                            return;
                         }
                     }
                 },
@@ -162,6 +187,21 @@ namespace CultivationHouseTools.actions
             _tokenSource?.Cancel();
             _tokenSource = null;
             Common.addMessage(_form.message, msg);
+        }
+
+        public void removeOpened(AutomationElement scrollViewer)
+        {
+
+            AutomationElementCollection allLabel = scrollViewer.FindAll(TreeScope.Descendants,
+                new PropertyCondition(AutomationElement.ClassNameProperty, "TextBlock"));
+
+            for (int i = 0; i < allLabel.Count; i++)
+            {
+                if (allLabel[i].Current.Name != null && allLabel[i].Current.Name != "")
+                {
+                    UnknownLib.RemainMap[_index].Remove(i);
+                }
+            }
         }
 
         private void moveToNextBox(AutomationElement window)
@@ -202,121 +242,114 @@ namespace CultivationHouseTools.actions
         }
 
 
-        public void autoOpenUnknown(AutomationElement scrollViewer)
+        public bool autoOpenUnknown(AutomationElement scrollViewer)
         {
-            TryGetNext(out int key);
-
-            Point p = ClickCell(scrollViewer, key);
-
-            SetCursorPos((int)p.X, (int)p.Y);
-
-            Thread.Sleep(720);
-
-            WinApi.LeftClick();
-
-            Common.addMessage(_form.message, $"{DateTime.Now.ToString()}，点击盲盒{_unknownIndex}第{key}个位置，X:{p.X},Y:{p.Y}");
-        }
-
-        public List<int> shuffle()
-        {
-            List<int> list = Enumerable.Range(1, 400).ToList();
-
-            for (int i = list.Count - 1; i > 0; i--)
+            if (TryGetNext(out int key))
             {
-                int j = _rnd.Next(i + 1);
-                (list[i], list[j]) = (list[j], list[i]);
-            }
+                Point p = ClickCell(scrollViewer, key);
 
-            return list;
+                SetCursorPos((int)p.X, (int)p.Y);
+
+                WinApi.LeftClick();
+
+                Common.addMessage(_form.message, $"{DateTime.Now.ToString()}，点击盲盒{_unknownIndex}第{key}个位置，X:{p.X},Y:{p.Y}");
+
+                Thread.Sleep(550);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public bool TryGetNext(out int value)
         {
-            while (_cursor < _order.Count)
-            {
-                int v = _order[_cursor++];
+            var list = UnknownLib.RemainMap[_index];
 
-                if (UnknownLib.clickedSet.Add(_front + v))
-                {
-                    value = v;
-                    return true;
-                }
+            if (list.Count == 0)
+            {
+                value = -1;
+                return false;
             }
 
-            value = -1;
-            return false;
+            int last = list.Count - 1;
+
+            value = list[last];
+
+            list.RemoveAt(last);
+
+            return true;
         }
 
-        private bool getUnknownIndex(AutomationElement window)
+        private void getUnknownIndex(AutomationElement window)
         {
-            _order = shuffle();
-            _cursor = 0;
             switch (_unknownIndex)
             {
                 case "1":
                     Common.clickButton(window, "切换盲盒1");
-                    Common.addMessage(_form.message, "切换盲盒1");
+                    Common.addMessage(_form.message, $"{DateTime.Now.ToString()}，切换盲盒1");
                     _front = "A";
                     _index = 0;
-                    return true;
+                    break;
                 case "2":
                     Common.clickButton(window, "切换盲盒2");
-                    Common.addMessage(_form.message, "切换盲盒2"); 
+                    Common.addMessage(_form.message, $"{DateTime.Now.ToString()}，切换盲盒2"); 
                     _front = "B";
                     _index = 1;
-                    return true;
+                    break;
                 case "3":
                     Common.clickButton(window, "切换盲盒3");
-                    Common.addMessage(_form.message, "切换盲盒3");
+                    Common.addMessage(_form.message, $"{DateTime.Now.ToString()}，切换盲盒3");
                     _front = "C";
                     _index = 2;
-                    return true;
+                    break;
                 case "4":
                     Common.clickButton(window, "切换盲盒4");
-                    Common.addMessage(_form.message, "切换盲盒4");
+                    Common.addMessage(_form.message, $"{DateTime.Now.ToString()}，切换盲盒4");
                     _front = "D";
                     _index = 3;
-                    return true;
+                    break;
                 case "5":
                     Common.clickButton(window, "切换盲盒5");
-                    Common.addMessage(_form.message, "切换盲盒5");
+                    Common.addMessage(_form.message, $"{DateTime.Now.ToString()}，切换盲盒5");
                     _front = "E";
                     _index = 4;
-                    return true;
+                    break;
                 case "6":
                     Common.clickButton(window, "切换盲盒6");
-                    Common.addMessage(_form.message, "切换盲盒6");
+                    Common.addMessage(_form.message, $"{DateTime.Now.ToString()}，切换盲盒6");
                     _front = "F";
                     _index = 5;
-                    return true;
+                    break;
                 case "7":
                     Common.clickButton(window, "切换盲盒7");
-                    Common.addMessage(_form.message, "切换盲盒7");
+                    Common.addMessage(_form.message, $"{DateTime.Now.ToString()}，切换盲盒7");
                     _front = "G";
                     _index = 6;
-                    return true;
+                    break;
                 case "8":
                     Common.clickButton(window, "切换盲盒8");
-                    Common.addMessage(_form.message, "切换盲盒8");
+                    Common.addMessage(_form.message, $"{DateTime.Now.ToString()}，切换盲盒8");
                     _front = "H";
                     _index = 7;
-                    return true;
+                    break;
                 case "9":
                     Common.clickButton(window, "切换盲盒9");
-                    Common.addMessage(_form.message, "切换盲盒9");
+                    Common.addMessage(_form.message, $"{DateTime.Now.ToString()}，切换盲盒9");
                     _front = "I";
                     _index = 8;
-                    return true;
+                    break;
                 case "10":
                     Common.clickButton(window, "切换盲盒10");
-                    Common.addMessage(_form.message, "切换盲盒10");
+                    Common.addMessage(_form.message, $"{DateTime.Now.ToString()}，切换盲盒10");
                     _front = "J";
                     _index = 9;
-                    return true;
+                    break;
                 default:
                     _front = "ERROR";
                     _index = -1;
-                    return false;
+                    break;
             }
         }
 
@@ -336,14 +369,14 @@ namespace CultivationHouseTools.actions
         {
             var sp = GetScrollPattern(scrollViewer);
 
-            int row = (key - 1) / Cols;
-            int col = (key - 1) % Cols;
+            int row = key / Cols;
+            int col = key % Cols;
 
             // 1. 先确保滚动到目标附近
             ScrollToCell(sp, row, col);
 
             // 2. 等待UI刷新
-            System.Threading.Thread.Sleep(150);
+            Thread.Sleep(150);
 
             // 3. 获取最新滚动状态
             var info = GetScrollInfo(sp);

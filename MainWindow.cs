@@ -80,17 +80,14 @@ namespace CultivationHouseTools
         private void flip_Click(object sender, EventArgs e)
         {
             AutomationElement window = Common.getWindow("心愿盲盒");
-            AutomationElementCollection automationElementCollection = window.FindAll(
-                    TreeScope.Descendants,
-                    new PropertyCondition(AutomationElement.ClassNameProperty,"ScrollViewer"));
+            AutomationElement noCount = Common.getElById(window, "TiShiLabel");
 
-            AutomationElementCollection automationElementCollection1 = automationElementCollection[0].FindAll(TreeScope.Descendants,
-                new PropertyCondition(AutomationElement.ClassNameProperty, "Label"));
+            Common.addMessage(message, $"{noCount.Current.Name}");
+            Thread.Sleep(2000);
+            Common.addMessage(message, $"{noCount.Current.Name}");
+            Thread.Sleep(2000);
+            Common.addMessage(message, $"{noCount.Current.Name}");
 
-            foreach (AutomationElement item in automationElementCollection1)
-            {
-                Common.addMessage(message, $"{item.Current.Name}");
-            }
 
             //Common.addMessage(message, "敬请期待！");
             //return;
@@ -102,17 +99,13 @@ namespace CultivationHouseTools
             return;
         }
 
-        private async void unknownBox_Click(object sender, EventArgs e)
+        private void unknownBox_Click(object sender, EventArgs e)
         {
-            await Task.Run(() =>
-            {
-                _autoUnknown.run();
-            });
+            _autoUnknown.run();
         }
 
         private void stopUnknownBox_Click(object sender, EventArgs e)
         {
-
             _autoUnknown.stop("结束开盲盒");
         }
 
