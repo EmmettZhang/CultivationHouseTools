@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Input;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace CultivationHouseTools.actions
 {
@@ -21,6 +22,7 @@ namespace CultivationHouseTools.actions
         private string _unknownIndex;
         private int _index;
         private string _front;
+        private AutomationElement _scrollViewer;
         private static Random _rnd = new Random();
 
         private int _switchCount = 0;
@@ -105,7 +107,7 @@ namespace CultivationHouseTools.actions
                         AutomationElement.ClassNameProperty,
                         "ScrollViewer"));
 
-            AutomationElement scrollViewer = automationElementCollection[_index];
+            _scrollViewer = automationElementCollection[_index];
 
             string s = _form.unknownNum.Text.Trim();
             if (int.TryParse(s, out int num))
@@ -113,13 +115,18 @@ namespace CultivationHouseTools.actions
                 _tokenSource = new CancellationTokenSource();
                 int count = 0;
                 AutomationElement noCount = Common.getElById(window, "TiShiLabel");
+                bool flag = moveToNextBox(false, window, noCount, automationElementCollection);
+                if (flag)
+                {
+                    return;
+                }
                 long currentTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
                 await Task.Run(() =>
                 {
                     while (_tokenSource != null && !_tokenSource.Token.IsCancellationRequested)
                     {
-                        bool clicked = autoOpenUnknown(scrollViewer);
+                        bool clicked = autoOpenUnknown();
                         if (!clicked) {
                             stop("已无位置可开，停止");
                             return;
@@ -134,8 +141,12 @@ namespace CultivationHouseTools.actions
                             else if (noCount.Current.Name.IndexOf("该盲盒剩特殊物品：0") > 0)
                             {
                                 // 没有特殊物品，切换盲盒，1-5均无特殊物品后停止
-                                moveToNextBox(window);
-                                scrollViewer = automationElementCollection[_index];
+                                flag = moveToNextBox(true, window, noCount, automationElementCollection);
+                                if (flag)
+                                {
+                                    return;
+                                }
+                                currentTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                             }
                             else if (noCount.Current.Name == "你没有钥匙，无法开启盲盒（钥匙通过设置 - 发红包下面 - 发灵包获得）")
                             {
@@ -148,23 +159,12 @@ namespace CultivationHouseTools.actions
 
                         if (DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - currentTime >= 60000)
                         {
+                            flag = refreshUnknown(window, noCount, automationElementCollection);
+                            if (flag) {
+                                return;
+                            }
                             currentTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                            Common.clickButton(window, "刷新当前盲盒数据");
-                            Thread.Sleep(1000);
-                            // 检查是否还有特殊物品
-                            if (noCount.Current.Name.IndexOf("该盲盒剩余特殊物品：0") > 0)
-                            {
-                                // 没有特殊物品，切换盲盒
-                                moveToNextBox(window);
-                                scrollViewer = automationElementCollection[_index];
-                            }
-                            else
-                            {
-                                // 排除已开位置
-                                removeOpened(scrollViewer);
-                            }
                         }
-
 
                         if (count >= num)
                         {
@@ -182,6 +182,24 @@ namespace CultivationHouseTools.actions
             }
         }
 
+        public bool refreshUnknown(AutomationElement window, AutomationElement noCount, AutomationElementCollection automationElementCollection)
+        {
+            Common.clickButton(window, "刷新当前盲盒数据");
+            Thread.Sleep(1000);
+            // 检查是否还有特殊物品
+            if (noCount.Current.Name.IndexOf("该盲盒剩余特殊物品：0") > 0)
+            {
+                // 没有特殊物品，切换盲盒
+                return moveToNextBox(true, window, noCount, automationElementCollection);
+            }
+            else
+            {
+                // 排除已开位置
+                removeOpened();
+            }
+            return false;
+        }
+
         public void stop(string msg)
         {
             _tokenSource?.Cancel();
@@ -189,10 +207,9 @@ namespace CultivationHouseTools.actions
             Common.addMessage(_form.message, msg);
         }
 
-        public void removeOpened(AutomationElement scrollViewer)
+        public void removeOpened()
         {
-
-            AutomationElementCollection allLabel = scrollViewer.FindAll(TreeScope.Descendants,
+            AutomationElementCollection allLabel = _scrollViewer.FindAll(TreeScope.Descendants,
                 new PropertyCondition(AutomationElement.ClassNameProperty, "TextBlock"));
 
             for (int i = 0; i < allLabel.Count; i++)
@@ -204,21 +221,30 @@ namespace CultivationHouseTools.actions
             }
         }
 
-        private void moveToNextBox(AutomationElement window)
+        private bool moveToNextBox(bool getNext, AutomationElement window, AutomationElement noCount, AutomationElementCollection automationElementCollection)
         {
-            int.TryParse(_unknownIndex, out int unknownIndex);
-            int nextUnknownIndex = GetNextBox(unknownIndex);
-
-            _unknownIndex = nextUnknownIndex.ToString();
-            getUnknownIndex(window);
-
-            _switchCount++;
-
-            if (_switchCount >= MaxSwitchCount)
+            if (getNext)
             {
-                string mes = nextUnknownIndex >= 1 && nextUnknownIndex <= 5 ? "1-5" : "6-10";
-                stop($"盲盒{mes}均已没有特殊物品，停止");
+                int.TryParse(_unknownIndex, out int unknownIndex);
+                int nextUnknownIndex = GetNextBox(unknownIndex);
+
+                _unknownIndex = nextUnknownIndex.ToString();
+                getUnknownIndex(window);
+                _scrollViewer = automationElementCollection[_index];
+
+                _switchCount++;
+
+                if (_switchCount >= MaxSwitchCount)
+                {
+                    string mes = nextUnknownIndex >= 1 && nextUnknownIndex <= 5 ? "1-5" : "6-10";
+                    stop($"盲盒{mes}均已没有特殊物品，停止");
+                    return true;
+                }
             }
+            if ((getNext && _unknownIndex != _form.unknownIndex.Text) || !getNext) {
+                return refreshUnknown(window, noCount, automationElementCollection);
+            }
+            return false;
         }
 
         private int GetNextBox(int current)
@@ -242,19 +268,20 @@ namespace CultivationHouseTools.actions
         }
 
 
-        public bool autoOpenUnknown(AutomationElement scrollViewer)
+        public bool autoOpenUnknown()
         {
             if (TryGetNext(out int key))
             {
-                Point p = ClickCell(scrollViewer, key);
+                Point p = ClickCell(key);
 
                 SetCursorPos((int)p.X, (int)p.Y);
+                Thread.Sleep(300);
 
                 WinApi.LeftClick();
+                Thread.Sleep(300);
 
                 Common.addMessage(_form.message, $"{DateTime.Now.ToString()}，点击盲盒{_unknownIndex}第{key}个位置，X:{p.X},Y:{p.Y}");
-
-                Thread.Sleep(550);
+                
                 return true;
             }
             else
@@ -365,9 +392,9 @@ namespace CultivationHouseTools.actions
         //==================================================
         // 主入口：点击某个格子
         //==================================================
-        public static Point ClickCell(AutomationElement scrollViewer,int key)
+        public Point ClickCell(int key)
         {
-            var sp = GetScrollPattern(scrollViewer);
+            var sp = GetScrollPattern(_scrollViewer);
 
             int row = key / Cols;
             int col = key % Cols;
@@ -376,7 +403,7 @@ namespace CultivationHouseTools.actions
             ScrollToCell(sp, row, col);
 
             // 2. 等待UI刷新
-            Thread.Sleep(150);
+            Thread.Sleep(200);
 
             // 3. 获取最新滚动状态
             var info = GetScrollInfo(sp);
@@ -390,7 +417,7 @@ namespace CultivationHouseTools.actions
             double gridY = row * CellH + CellH / 2.0;
 
             // 6. 转换为屏幕坐标
-            var rect = scrollViewer.Current.BoundingRectangle;
+            var rect = _scrollViewer.Current.BoundingRectangle;
 
             int x = (int)(rect.Left + (gridX - offsetX));
             int y = (int)(rect.Top + (gridY - offsetY));
@@ -401,7 +428,7 @@ namespace CultivationHouseTools.actions
         //==================================================
         // 滚动到目标格子附近
         //==================================================
-        private static void ScrollToCell(ScrollPattern sp, int row, int col)
+        private void ScrollToCell(ScrollPattern sp, int row, int col)
         {
             var info = GetScrollInfo(sp);
 
@@ -427,7 +454,7 @@ namespace CultivationHouseTools.actions
         //==================================================
         // 安全滚动（避免“无法接收焦点”）
         //==================================================
-        private static void SetSafe(ScrollPattern sp, double? h, double? v)
+        private void SetSafe(ScrollPattern sp, double? h, double? v)
         {
             try
             {
@@ -444,7 +471,7 @@ namespace CultivationHouseTools.actions
         //==================================================
         // 获取ScrollPattern
         //==================================================
-        private static ScrollPattern GetScrollPattern(AutomationElement el)
+        private ScrollPattern GetScrollPattern(AutomationElement el)
         {
             return (ScrollPattern)el.GetCurrentPattern(ScrollPattern.Pattern);
         }
@@ -452,7 +479,7 @@ namespace CultivationHouseTools.actions
         //==================================================
         // 获取滚动信息
         //==================================================
-        private static ScrollInfo GetScrollInfo(ScrollPattern sp)
+        private ScrollInfo GetScrollInfo(ScrollPattern sp)
         {
             double visibleCols = Cols * sp.Current.HorizontalViewSize / 100.0;
 

@@ -140,5 +140,10 @@ namespace CultivationHouseTools
                 _autoTwelve.stop();
             }
         }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            timeLabel.Text = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
+        }
     }
 }

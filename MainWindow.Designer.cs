@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.refresh = new System.Windows.Forms.Button();
             this.flip = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -53,6 +54,8 @@
             this.dailyStatus = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.timeLabel = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -267,10 +270,10 @@
             // dailyStatus
             // 
             this.dailyStatus.AutoSize = true;
-            this.dailyStatus.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.dailyStatus.Location = new System.Drawing.Point(305, 14);
+            this.dailyStatus.Font = new System.Drawing.Font("宋体", 9F);
+            this.dailyStatus.Location = new System.Drawing.Point(370, 16);
             this.dailyStatus.Name = "dailyStatus";
-            this.dailyStatus.Size = new System.Drawing.Size(105, 14);
+            this.dailyStatus.Size = new System.Drawing.Size(89, 12);
             this.dailyStatus.TabIndex = 23;
             this.dailyStatus.Text = "自动日常未开始";
             // 
@@ -309,11 +312,25 @@
             this.panel1.Size = new System.Drawing.Size(232, 192);
             this.panel1.TabIndex = 26;
             // 
+            // timer1
+            // 
+            this.timer1.Enabled = true;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // timeLabel
+            // 
+            this.timeLabel.AutoSize = true;
+            this.timeLabel.Location = new System.Drawing.Point(250, 16);
+            this.timeLabel.Name = "timeLabel";
+            this.timeLabel.Size = new System.Drawing.Size(0, 12);
+            this.timeLabel.TabIndex = 27;
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(471, 545);
+            this.Controls.Add(this.timeLabel);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.dailyStatus);
@@ -360,6 +377,8 @@
         private System.Windows.Forms.Panel panel1;
         public System.Windows.Forms.TextBox unknownIndex;
         public System.Windows.Forms.TextBox unknownNum;
+        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Label timeLabel;
     }
 }
 
