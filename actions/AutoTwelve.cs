@@ -107,6 +107,17 @@ namespace CultivationHouseTools.actions
                 return;
             }
 
+            realBoss(mainWindow);
+
+            // 如果是周一
+            if (DateTime.Now.DayOfWeek == DayOfWeek.Monday)
+            {
+                hulu(mainWindow);
+            }
+        }
+
+        private void realBoss(AutomationElement mainWindow)
+        {
             Common.changeTab(mainWindow, "BOSS", 0);
             Common.clickButton(mainWindow, "真·BOSS烛龙");
 
@@ -141,6 +152,51 @@ namespace CultivationHouseTools.actions
                 Common.clickButton(bossWindow, "抽取奖励");
                 Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},抽取真BOSS奖励");
                 Common.clickButtonById(bossWindow, "Close");
+            }
+        }
+
+
+        // 葫芦
+        public void hulu(AutomationElement mainWindow)
+        {
+            Common.clickButton(mainWindow, "仙玉商店");
+            AutomationElement jadeWindow = null;
+            elapsed = 0;
+            while (elapsed < timeoutMs)
+            {
+                jadeWindow = Common.getWindow("仙玉商店");
+
+                if (jadeWindow != null)
+                    break;
+
+                Thread.Sleep(interval);
+                elapsed += interval;
+            }
+            if (jadeWindow != null)
+            {
+                Common.clickButton(jadeWindow, "宝葫芦玩法");
+                AutomationElement huluWindow = null;
+                elapsed = 0;
+                while (elapsed < timeoutMs)
+                {
+                    huluWindow = Common.getWindow("宝葫芦");
+
+                    if (huluWindow != null)
+                        break;
+
+                    Thread.Sleep(interval);
+                    elapsed += interval;
+                }
+                if (huluWindow != null)
+                {
+                    
+                    Common.clickButton(huluWindow, "收获葫芦");
+                    Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},收获宝葫芦");
+                    Thread.Sleep(new Random().Next(1000, 2000));
+                    Common.clickButtonById(huluWindow, "Close");
+                    Common.clickButtonById(jadeWindow, "Close");
+                    Thread.Sleep(new Random().Next(500, 1000));
+                }
             }
         }
 

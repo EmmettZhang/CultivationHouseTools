@@ -200,13 +200,6 @@ namespace CultivationHouseTools.actions
                     Common.clickButton(huluWindow, "每日签到");
                     Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},宝葫芦签到");
                     Thread.Sleep(new Random().Next(1000, 2000));
-                    // 如果是周一
-                    if (DateTime.Now.DayOfWeek == DayOfWeek.Monday)
-                    {
-                        Common.clickButton(huluWindow, "收获葫芦");
-                        Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},收获宝葫芦");
-                        Thread.Sleep(new Random().Next(1000, 2000));
-                    }
                     Common.clickButton(huluWindow, "播撒全部灵露");
                     Common.addMessage(_form.dailyMessage, $"{DateTime.Now.ToString()},播撒宝葫芦灵露");
                     Common.clickButtonById(huluWindow, "Close");
